@@ -1,3 +1,2 @@
 # plantie
-
-A new Flutter project.
+Senior Project App
