@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plantie/pages/custom_navbar.dart';
+import 'package:plantie/shared/custom_navbar_page.dart';
 import 'package:plantie/pages/landing_page.dart';
 
 void main() {
