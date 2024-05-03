@@ -10,14 +10,17 @@ class HomePage extends StatefulWidget {
 class _MyWidgetState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text('Home Page'),
-        ],
-      ),
+    // return const Center(
+    //   child: Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     crossAxisAlignment: CrossAxisAlignment.center,
+    //     children: [
+    //       Text('Home Page'),
+    //     ],
+    //   ),
+    // )
+    return const MaterialApp(
+      home: Center(child: Text('Home Page',style: TextStyle(color: Colors.black87,),)),
     );
   }
 }
