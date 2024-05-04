@@ -13,6 +13,7 @@ dependencies:
   curved_labeled_navigation_bar: ^2.0.2
   flip_card: ^0.7.0
   flutter_svg: ^2.0.5
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
