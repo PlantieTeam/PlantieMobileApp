@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 enum WeatherStatus { partlyCloudy, sunny, cloudy, rainy }
 
@@ -16,10 +17,17 @@ class WeatherCard extends StatefulWidget {
       {super.key,
       required this.status,
       required this.location,
-      required this.temperature});
+      required this.temperature,
+      required this.suggestion,
+      required this.timeOfRain,
+      required this.humidity});
   final WeatherStatus status;
   final String location;
   final int temperature;
+  final String timeOfRain;
+  final String suggestion;
+  final String humidity;
+
   @override
   State<WeatherCard> createState() => _WeatherCardState();
 }
@@ -73,7 +81,7 @@ class _WeatherCardState extends State<WeatherCard> {
             height: 183,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(9),
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                   begin: Alignment(-0.5, 0.5),
                   end: Alignment(0.5, 0.5),
                   colors: [Color(0x66D9D9D9), Color(0x00D9D9D9)]),
@@ -88,7 +96,10 @@ class _WeatherCardState extends State<WeatherCard> {
                   children: [
                     Text(
                       status,
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     SvgPicture.asset("assets/images/$img"),
                   ],
@@ -100,20 +111,32 @@ class _WeatherCardState extends State<WeatherCard> {
                     thickness: 1,
                   ),
                 ),
-                const Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("New York, USA",
-                        style: TextStyle(fontSize: 14, color: Colors.white)),
-                    Text("Monday",
-                        style: TextStyle(fontSize: 9, color: Colors.white)),
-                    SizedBox(height: 10),
-                    Text("22°",
-                        style: TextStyle(fontSize: 24, color: Colors.white)),
-                    SizedBox(height: 10),
-                    Text("77 .7 F°",
-                        style: TextStyle(fontSize: 16, color: Colors.white))
+                    Text(widget.location,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                    Text(DateFormat('EEEE').format(DateTime.now()),
+                        style: const TextStyle(
+                            fontSize: 9,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Text('${widget.temperature.toString()} °',
+                        style: const TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Text("${((widget.temperature * 9 / 5) + 32).toString()} F°",
+                        style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold))
                   ],
                 )
               ],
@@ -133,12 +156,88 @@ class _WeatherCardState extends State<WeatherCard> {
           height: 183,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(9),
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
                 begin: Alignment(-0.5, 0.5),
                 end: Alignment(0.5, 0.5),
                 colors: [Color(0x66D9D9D9), Color(0x00D9D9D9)]),
           ),
-          child: Text("back"),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        status,
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text('${widget.temperature.toString()}° C',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              color: Colors.white)),
+                      Text(
+                        widget.location,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  SvgPicture.asset("assets/images/$img"),
+                ],
+              ),
+              const SizedBox(
+                width: 338.77,
+                child: Divider(
+                  color: Color(0x63FFFFFF),
+                  thickness: 1,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.timeOfRain,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.suggestion,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SvgPicture.asset("assets/images/weather_humidity.svg"),
+                      Text(
+                        widget.humidity,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
