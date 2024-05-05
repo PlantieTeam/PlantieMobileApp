@@ -5,7 +5,6 @@ import 'package:plantie/pages/community_page.dart';
 import 'package:plantie/pages/diagnosis_page.dart';
 import 'package:plantie/pages/home_page.dart';
 import 'package:plantie/pages/profile_page.dart';
-import 'package:plantie/shared/custom_clipper_navbar.dart';
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({super.key});
