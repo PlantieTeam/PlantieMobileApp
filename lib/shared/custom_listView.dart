@@ -22,7 +22,7 @@ class _CustomListViewState extends State<CustomListView> {
   ];
   Color iconBorderButtomSide = const Color(0xff777777);
   Color listBorderButtomSide = const Color(0xffE6E6E6);
-  int? selectedIconIndex;
+  int selectedIconIndex = 0;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -42,12 +42,7 @@ class _CustomListViewState extends State<CustomListView> {
                   selectedIconIndex = index;
                 });
               },
-              onDoubleTap: () {
-                setState(() {
-                  selectedIconIndex = null;
-                });
-              },
-              child: Container(
+              child:  Container(
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
@@ -55,8 +50,8 @@ class _CustomListViewState extends State<CustomListView> {
                                   ? iconBorderButtomSide
                                   : listBorderButtomSide,
                               width: 1.1))),
-                  padding:
-                      const EdgeInsetsDirectional.fromSTEB(14.0, 14.0, 14.0, 8),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      14.0, 14.0, 14.0, 18),
                   child: Image.asset(
                     iconsList[index],
                   )),
