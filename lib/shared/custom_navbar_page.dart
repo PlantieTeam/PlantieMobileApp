@@ -24,7 +24,8 @@ class _MyWidgetState extends State<CustomNavBar> {
   @override
   Widget build(BuildContext context) {
     const double iconsSize = 10;
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       body: PageStorage(
         bucket: bucket,
         child: currentScreen,
@@ -43,6 +44,7 @@ class _MyWidgetState extends State<CustomNavBar> {
           //: Colors.white,
         ),
       ),
+      extendBody: true,
       bottomNavigationBar: ClipPath(
         child: BottomAppBar(
             shape: const CircularNotchedRectangle(),
@@ -169,6 +171,6 @@ class _MyWidgetState extends State<CustomNavBar> {
               ),
             )),
       ),
-    );
+    ));
   }
 }
