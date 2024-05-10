@@ -68,7 +68,7 @@ class _WeatherCardState extends State<WeatherCard> {
       direction: FlipDirection.HORIZONTAL, // default
       side: CardSide.FRONT, // The side to initially display.
       front: Container(
-        width: 370,
+        width: MediaQuery.of(context).size.width * 0.95,
         height: 183,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(9),
