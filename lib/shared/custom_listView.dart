@@ -42,7 +42,7 @@ class _CustomListViewState extends State<CustomListView> {
                   selectedIconIndex = index;
                 });
               },
-              child:  Container(
+              child: Container(
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
