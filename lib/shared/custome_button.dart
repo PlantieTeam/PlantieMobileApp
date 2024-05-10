@@ -18,7 +18,7 @@ class _ButtonState extends State<Button> {
           backgroundColor: Color.fromRGBO(71, 184, 138, 1),
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(50),
           ),
           minimumSize: Size(339, 46)),
       onPressed: widget.onPressed,
