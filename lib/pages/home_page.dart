@@ -86,37 +86,43 @@ class _MyWidgetState extends State<HomePage> {
                     Container(
                       width: MediaQuery.of(context).size.width * ratio,
                       // height: 400,
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.only(top: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: const Color(0xffD9D9D9),
                       ),
-                      child: const Column(
+                      child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               "Growing season",
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 10,),
-                            Text(
-                                "They typically grow best in late spring, summer, and early fall in most climates."),
-                            SizedBox(
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                                "They typically grow best in late spring, summer, and early fall in most climates.",
+                                style: TextStyle(
+                                    fontSize: 14, color: Color(0xff465165))),
+                            const SizedBox(
                               height: 20,
                             ),
-
-                            Text(
+                            const Text(
                               "Water Need",
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-
-                            Text("1 inch of water per week")
+                            const Text("1 inch of water per week",
+                                style: TextStyle(
+                                    fontSize: 14, color: Color(0xff465165))),
+                            const SizedBox(height: 20),
+                            Button(text: "Read more", onPressed: () {})
                           ]),
                     )
                   ],
