@@ -18,7 +18,10 @@ class MainApp extends StatelessWidget {
           create: (context) => PlantBloc()..add(LoadPlants()),
         ),
       ],
-      child: const MaterialApp(home: CustomNavBar()),
+      child: const MaterialApp(
+        home: CustomNavBar(),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
