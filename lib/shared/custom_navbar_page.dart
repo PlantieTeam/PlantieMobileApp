@@ -26,6 +26,24 @@ class _MyWidgetState extends State<CustomNavBar> {
     const double iconsSize = 10;
     return SafeArea(
         child: Scaffold(
+      // drawer: const Drawer(),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'Plantie',
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications,
+              )),
+          IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
+        ],
+      ),
       body: PageStorage(
         bucket: bucket,
         child: currentScreen,
