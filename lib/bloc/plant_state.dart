@@ -12,7 +12,8 @@ final class PlantInitial extends PlantState {}
 
 final class PlantLoaded extends PlantState {
   final List<Plant> plants;
-  const PlantLoaded(this.plants);
+  final int selectedPlant;
+  const PlantLoaded(this.plants, this.selectedPlant);
   @override
-  List<Object> get props => [plants];
+  List<Object> get props => [plants, selectedPlant];
 }

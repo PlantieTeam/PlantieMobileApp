@@ -25,3 +25,12 @@ class RemovePlant extends PlantEvent {
   @override
   List<Object> get props => [plant];
 }
+
+class SelectPlant extends PlantEvent {
+  final int selectedPlant; //plant to be selected
+
+  const SelectPlant({required this.selectedPlant});
+
+  @override
+  List<Object> get props => [selectedPlant];
+}
