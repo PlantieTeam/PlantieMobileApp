@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<HomePage> {
-  double ratio = 0.90;
+  double ratio = 0.95;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PlantBloc, PlantState>(builder: (context, state) {
@@ -32,7 +32,7 @@ class _MyWidgetState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const WeatherCard(
-                    status: WeatherStatus.rainy,
+                    status: WeatherStatus.sunny,
                     location: "Palestine Jenin",
                     temperature: 30,
                     suggestion: "Good for applying the fertilizers",
@@ -152,6 +152,8 @@ class _MyWidgetState extends State<HomePage> {
                         )
                       ],
                     )),
+                // SizedBox(height: 20,),
+
                 const SizedBox(
                   height: 100,
                 )
