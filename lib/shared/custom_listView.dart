@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CustomListView extends StatefulWidget {
-  const CustomListView({super.key});
+  final int selectedIndex;
+  final Function(int) onTap;
+  const CustomListView(
+      {super.key, required this.selectedIndex, required this.onTap});
 
   @override
   State<CustomListView> createState() => _CustomListViewState();
@@ -22,7 +25,6 @@ class _CustomListViewState extends State<CustomListView> {
   ];
   Color iconBorderButtomSide = const Color(0xff777777);
   Color listBorderButtomSide = const Color(0xffE6E6E6);
-  int selectedIconIndex = 0;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -38,15 +40,13 @@ class _CustomListViewState extends State<CustomListView> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                setState(() {
-                  selectedIconIndex = index;
-                });
+                widget.onTap(index);
               },
               child: Container(
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
-                              color: index == selectedIconIndex
+                              color: index == widget.selectedIndex
                                   ? iconBorderButtomSide
                                   : listBorderButtomSide,
                               width: 1.1))),
