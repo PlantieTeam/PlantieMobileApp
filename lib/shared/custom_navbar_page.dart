@@ -18,12 +18,32 @@ class _MyWidgetState extends State<CustomNavBar> {
 
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = const HomePage();
-  Color secondaryColor = const Color(0xff00796A);
+  Color secondaryColor = const Color(0x7f1A6158);
   Color primaryColor = const Color(0xff47B88A);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    const double iconsSize = 10;
+    return SafeArea(
+        child: Scaffold(
+      // drawer: const Drawer(),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'Plantie',
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications,
+              )),
+          IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
+        ],
+      ),
       body: PageStorage(
         bucket: bucket,
         child: currentScreen,
@@ -38,12 +58,12 @@ class _MyWidgetState extends State<CustomNavBar> {
         },
         child: SvgPicture.asset(
           'assets/icons/camera.svg',
+          color: Colors.white,
           //: Colors.white,
         ),
-        //mini: true,
       ),
+      extendBody: true,
       bottomNavigationBar: ClipPath(
-        //clipper: CustomBottomNavBarClipper(),
         child: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             notchMargin: 9,
@@ -53,143 +73,115 @@ class _MyWidgetState extends State<CustomNavBar> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 23, 0, 0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  MaterialButton(
+                    minWidth: iconsSize,
+                    onPressed: () {
+                      setState(() {
+                        currentScreen = const HomePage();
+                        _currentIndex = 0;
+                      });
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MaterialButton(
-                          minWidth: 40.0,
-                          onPressed: () {
-                            setState(() {
-                              currentScreen = const HomePage();
-                              _currentIndex = 0;
-                            });
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/home.svg',
-                                // ignore: deprecated_member_use
+                        SvgPicture.asset(
+                          'assets/icons/home.svg',
+                          // ignore: deprecated_member_use
+                          color: _currentIndex == 0
+                              ? primaryColor
+                              : secondaryColor,
+                        ),
+                        Text('Plants',
+                            style: TextStyle(
                                 color: _currentIndex == 0
                                     ? primaryColor
                                     : secondaryColor,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                child: Text('Plants',
-                                    style: TextStyle(
-                                        color: _currentIndex == 0
-                                            ? primaryColor
-                                            : secondaryColor,
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w400)),
-                              )
-                            ],
-                          ),
-                        ),
-                        MaterialButton(
-                          minWidth: 40.0,
-                          onPressed: () {
-                            setState(() {
-                              currentScreen = const CommunityPage();
-                              _currentIndex = 1;
-                            });
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/community.svg', // ignore: deprecated_member_use
-                                // ignore: deprecated_member_use
-                                color: _currentIndex == 1
-                                    ? primaryColor
-                                    : secondaryColor,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                child: Text('Community',
-                                    style: TextStyle(
-                                        color: _currentIndex == 1
-                                            ? primaryColor
-                                            : secondaryColor,
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w400)),
-                              )
-                            ],
-                          ),
-                        ),
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 23, 0, 0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  MaterialButton(
+                    minWidth: iconsSize,
+                    onPressed: () {
+                      setState(() {
+                        currentScreen = const CommunityPage();
+                        _currentIndex = 1;
+                      });
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MaterialButton(
-                          minWidth: 40.0,
-                          onPressed: () {
-                            setState(() {
-                              currentScreen = const ProfilePage();
-                              _currentIndex = 2;
-                            });
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/profile.svg',
-                                // ignore: deprecated_member_use
+                        SvgPicture.asset(
+                          'assets/icons/community.svg', // ignore: deprecated_member_use
+                          // ignore: deprecated_member_use
+                          color: _currentIndex == 1
+                              ? primaryColor
+                              : secondaryColor,
+                        ),
+                        Text('Community',
+                            style: TextStyle(
+                                color: _currentIndex == 1
+                                    ? primaryColor
+                                    : secondaryColor,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                  ),
+                  MaterialButton(
+                    minWidth: iconsSize,
+                    onPressed: () {
+                      setState(() {
+                        currentScreen = const ProfilePage();
+                        _currentIndex = 2;
+                      });
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/profile.svg',
+                          // ignore: deprecated_member_use
+                          color: _currentIndex == 2
+                              ? primaryColor
+                              : secondaryColor,
+                        ),
+                        Text('Profile',
+                            style: TextStyle(
                                 color: _currentIndex == 2
                                     ? primaryColor
                                     : secondaryColor,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                child: Text('Profile',
-                                    style: TextStyle(
-                                        color: _currentIndex == 2
-                                            ? primaryColor
-                                            : secondaryColor,
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w400)),
-                              )
-                            ],
-                          ),
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                  ),
+                  MaterialButton(
+                    minWidth: iconsSize,
+                    onPressed: () {
+                      setState(() {
+                        currentScreen = const DiagnosisPage();
+                        _currentIndex = 3;
+                      });
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/camera_small.svg', // ignore: deprecated_member_use
+                          // ignore: deprecated_member_use
+                          color: _currentIndex == 3
+                              ? primaryColor
+                              : secondaryColor,
                         ),
-                        MaterialButton(
-                          minWidth: 40.0,
-                          onPressed: () {
-                            setState(() {
-                              currentScreen = const DiagnosisPage();
-                              _currentIndex = 3;
-                            });
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/camera_small.svg', // ignore: deprecated_member_use
-                                // ignore: deprecated_member_use
+                        Text('Diagnosis',
+                            style: TextStyle(
                                 color: _currentIndex == 3
                                     ? primaryColor
                                     : secondaryColor,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                child: Text('Diagnosis',
-                                    style: TextStyle(
-                                        color: _currentIndex == 3
-                                            ? primaryColor
-                                            : secondaryColor,
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w400)),
-                              )
-                            ],
-                          ),
-                        ),
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),
@@ -197,23 +189,6 @@ class _MyWidgetState extends State<CustomNavBar> {
               ),
             )),
       ),
-    );
+    ));
   }
 }
-
-// class CustomCurvedNavBar extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     Paint paint = Paint()
-//       ..color = Colors.white
-//       ..style = PaintingStyle.fill;
-//     Path path = Path()..moveTo(0, 20);
-//     canvas.drawPath(path, paint);
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     // TODO: implement shouldRepaint
-//     throw UnimplementedError();
-//   }
-// }
