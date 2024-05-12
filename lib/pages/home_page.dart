@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
+import 'package:plantie/pages/fertilizer_calculator_page.dart';
 import 'package:plantie/shared/custom_listView.dart';
 import 'package:plantie/shared/custome_button.dart';
 import 'package:plantie/shared/weather_card.dart';
@@ -18,7 +19,6 @@ class _MyWidgetState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<PlantBloc, PlantState>(builder: (context, state) {
       if (state is PlantInitial) {
-        context.read<PlantBloc>().add(LoadPlants());
         return const Center(child: CircularProgressIndicator());
       }
       if (state is PlantLoaded &&
@@ -100,7 +100,13 @@ class _MyWidgetState extends State<HomePage> {
                         Center(
                             child: Button(
                           text: "Calculate Fertilizer",
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const FertilizerCalculatorPage()));
+                          },
                         )),
                         Container(
                           width: MediaQuery.of(context).size.width * ratio,
@@ -161,7 +167,7 @@ class _MyWidgetState extends State<HomePage> {
             )));
       }
       return const Center(
-        child: Text("Error"),
+        child: Text("Not Found 404"),
       );
     });
   }
