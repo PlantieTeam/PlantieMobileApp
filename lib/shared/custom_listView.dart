@@ -28,10 +28,7 @@ class _CustomListViewState extends State<CustomListView> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(color: listBorderButtomSide, width: 1.1))),
+    return SizedBox(
       height: (size.height) * 0.1,
       width: size.width,
       child: ListView.builder(
