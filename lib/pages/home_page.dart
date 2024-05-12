@@ -114,8 +114,9 @@ class _MyWidgetState extends State<HomePage> {
                           padding: const EdgeInsets.all(10),
                           margin: const EdgeInsets.only(top: 20),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color(0xffD9D9D9),
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.grey.shade100,
+                            border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
