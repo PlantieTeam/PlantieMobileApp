@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "404741528477",
+    "project_id": "plantie-8fb24",
+    "storage_bucket": "plantie-8fb24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404741528477:android:4b4c41bd498920a3662d74",
+        "android_client_info": {
+          "package_name": "com.example.plantie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404741528477-k2nilh71ud4t4e2q2ql8jvmeemmn8afa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.plantie",
+            "certificate_hash": "237ecc37d7091bbf873507ff061a0740d0bf6382"
+          }
+        },
+        {
+          "client_id": "404741528477-q1aa06jpbi9hfbelffnseuscc7dfj7ss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_9z9HQHPhMK2SSca4jGfv7y8GzFQTZ-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404741528477-q1aa06jpbi9hfbelffnseuscc7dfj7ss.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "404741528477-7kcte4r8smbg88045vd97t8hti8fve8d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.plantie"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
