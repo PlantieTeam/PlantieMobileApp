@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-Future<void> signInWithGoogle(BuildContext context) async {
+Future<void> signInWithGoogle() async {
   // Trigger the authentication flow
   try {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -15,16 +14,10 @@ Future<void> signInWithGoogle(BuildContext context) async {
         accessToken: googleAuth.accessToken,
       );
 
-      final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      print(userCredential.user);
+      await FirebaseAuth.instance.signInWithCredential(credential);
     }
   } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Failed to sign in with Google. Please try again."),
-      ),
-    );
+    return null;
   }
 }
 
