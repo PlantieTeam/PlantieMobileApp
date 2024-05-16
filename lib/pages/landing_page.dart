@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:plantie/pages/login_page.dart';
 import 'package:plantie/shared/custome_button.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,14 +38,18 @@ class LandingPage extends StatelessWidget {
                     child: Wrap(
                       runSpacing: 10,
                       children: [
-                        Button(text: "Register", onPressed: () {}),
+                        Button(
+                            text: "Register",
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context,'/signup',);
+                            }),
                         Button(
                             text: "Login",
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushNamed(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()));
+                                  '/login',);
                             }),
                       ],
                     ),
