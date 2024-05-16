@@ -20,7 +20,7 @@ class _ButtonState extends State<Button> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
-          minimumSize: Size(339, 46)),
+          minimumSize: Size.fromHeight(46)),
       onPressed: widget.onPressed,
     );
   }
