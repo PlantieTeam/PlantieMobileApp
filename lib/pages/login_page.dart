@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
-import 'package:plantie/pages/signup_page.dart';
 import 'package:plantie/shared/custome_button.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +13,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _passwordInputVisablity = true;
+  final _formKey = GlobalKey<FormState>();
+  String email = "";
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -45,34 +47,49 @@ class _LoginPageState extends State<LoginPage> {
                   height: MediaQuery.of(context).size.height * 0.3,
                   width: MediaQuery.of(context).size.width * 0.95,
                   child: Form(
+                    key: _formKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Wrap(
                       alignment: WrapAlignment.start,
                       runSpacing: 20,
                       children: [
+                        state.message == "none"
+                            ? Container()
+                            : Container(
+                                margin: EdgeInsets.only(left: 10),
+                                child: Text(
+                                  state.message,
+                                  style: TextStyle(color: Colors.red),
+                                )),
                         ConstrainedBox(
                             constraints: BoxConstraints.tightFor(height: 44),
                             child: TextFormField(
+                              onSaved: (value) => email = value!,
                               decoration: InputDecoration(
                                   contentPadding:
                                       EdgeInsets.only(left: 20, right: 20),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Colors.black12),
+                                    borderSide: BorderSide(
+                                        color: state.message == "none"
+                                            ? Colors.black12
+                                            : Colors.red),
                                   ),
                                   hintText: "Email",
                                   hintTextDirection: TextDirection.ltr,
                                   hintStyle: TextStyle(color: Colors.black26),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Color(0xff00796A)),
+                                    borderSide: BorderSide(
+                                        color: state.message == "none"
+                                            ? Color(0xff00796A)
+                                            : Colors.red),
                                   )),
                             )),
                         ConstrainedBox(
                             constraints: BoxConstraints.tightFor(height: 44),
                             child: TextFormField(
+                              onSaved: (value) => password = value!,
                               obscureText: _passwordInputVisablity,
                               decoration: InputDecoration(
                                   suffixIcon: IconButton(
@@ -90,16 +107,20 @@ class _LoginPageState extends State<LoginPage> {
                                       EdgeInsets.only(left: 20, right: 20),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Colors.black12),
+                                    borderSide: BorderSide(
+                                        color: state.message == "none"
+                                            ? Colors.black12
+                                            : Colors.red),
                                   ),
                                   hintText: "Password",
                                   hintTextDirection: TextDirection.ltr,
                                   hintStyle: TextStyle(color: Colors.black26),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Color(0xff00796A)),
+                                    borderSide: BorderSide(
+                                        color: state.message == "none"
+                                            ? Color(0xff00796A)
+                                            : Colors.red),
                                   )),
                             )),
                         TextButton(
@@ -119,17 +140,26 @@ class _LoginPageState extends State<LoginPage> {
                   width: MediaQuery.of(context).size.width * 0.95,
                   child: Column(
                     children: [
-                      Button(text: "Login", onPressed: () {}),
+                      Button(
+                          text: "Login",
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              debugPrint("email: $email, password: $password");
+                              BlocProvider.of<AuthBloc>(context).add(LoggedIn(
+                                email: email,
+                                password: password,
+                              ));
+                            }
+                          }),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("create an account?"),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignupPage()));
+                              Navigator.pushReplacementNamed(
+                                  context, '/signup');
                             },
                             child: Text(
                               "Sign In",
@@ -177,7 +207,8 @@ class _LoginPageState extends State<LoginPage> {
                           'assets/icons/google_icon.svg',
                         ),
                         onPressed: () {
-                          BlocProvider.of<AuthBloc>(context).add(LoggedIn());
+                          BlocProvider.of<AuthBloc>(context)
+                              .add(LoggedInWithGoogle());
                         },
                       ),
                     ],
@@ -191,6 +222,7 @@ class _LoginPageState extends State<LoginPage> {
               child: CircularProgressIndicator(),
             );
           }
+
           if (state is Authenticated) if (Navigator.canPop(context))
             Navigator.pop(context);
           return Center(
