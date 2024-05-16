@@ -6,6 +6,8 @@ import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
 import 'package:plantie/firebase_options.dart';
 import 'package:plantie/pages/landing_page.dart';
+import 'package:plantie/pages/login_page.dart';
+import 'package:plantie/pages/signup_page.dart';
 import 'package:plantie/shared/custom_navbar_page.dart';
 
 void main() async {
@@ -32,8 +34,16 @@ class MainApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        routes: {
+          // '/': (context) => LandingPage(),
+          '/login': (context) => LoginPage(),
+          '/signup': (context) => SignupPage(),
+        },
         title: 'Plantie',
         home: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+          if (state is AppStarted) {
+            return Center(child: CircularProgressIndicator());
+          }
           if (state is Unauthenticated) {
             return LandingPage();
           }
