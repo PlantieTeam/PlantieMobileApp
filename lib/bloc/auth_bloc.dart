@@ -24,8 +24,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
     on<LoggedOut>((event, emit) async {
+      // emit(Loading());
       await signOutWithGoogle();
-      await FirebaseAuth.instance.signOut();
       emit(Unauthenticated());
     });
     on<LoggedInWithGoogle>((event, emit) async {
