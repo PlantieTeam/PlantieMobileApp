@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/pages/camera.dart';
 import 'package:plantie/pages/community_page.dart';
 import 'package:plantie/pages/diagnosis_page.dart';
@@ -20,7 +23,7 @@ class _MyWidgetState extends State<CustomNavBar> {
   Widget currentScreen = const HomePage();
   Color secondaryColor = const Color(0x7f1A6158);
   Color primaryColor = const Color(0xff47B88A);
-
+  final User user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
     const double iconsSize = 10;
@@ -36,12 +39,31 @@ class _MyWidgetState extends State<CustomNavBar> {
           style: TextStyle(color: Colors.black),
         ),
         actions: [
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.notifications,
+          PopupMenuButton(
+              popUpAnimationStyle: AnimationStyle.noAnimation,
+              position: PopupMenuPosition.under,
+              icon: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                user.photoURL!,
               )),
-          IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
+              itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      child: Text('Profile'),
+                    ),
+                    PopupMenuItem(
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout),
+                          SizedBox(width: 5),
+                          Expanded(child: Text('Logout'))
+                        ],
+                      ),
+                      onTap: () {
+                        // signOutWithGoogle();
+                        BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+                      },
+                    )
+                  ]),
         ],
       ),
       body: PageStorage(
@@ -51,6 +73,7 @@ class _MyWidgetState extends State<CustomNavBar> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: primaryColor,
+        shape: const CircleBorder(),
         onPressed: () {
           setState(() {
             currentScreen = const CameraPage();
@@ -67,6 +90,7 @@ class _MyWidgetState extends State<CustomNavBar> {
         child: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             notchMargin: 9,
+            color: Colors.white,
             clipBehavior: Clip.antiAlias,
             child: SizedBox(
               height: 73.0,
