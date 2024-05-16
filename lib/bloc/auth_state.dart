@@ -16,5 +16,10 @@ class Authenticated extends AuthState {
   List<Object> get props => [user];
 }
 
-class Unauthenticated extends AuthState {}
+class Unauthenticated extends AuthState {
+  final String message;
+  const Unauthenticated({this.message = "none"});
+}
+
 class Loading extends AuthState {}
+
