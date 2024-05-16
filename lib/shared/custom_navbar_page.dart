@@ -43,9 +43,11 @@ class _MyWidgetState extends State<CustomNavBar> {
               popUpAnimationStyle: AnimationStyle.noAnimation,
               position: PopupMenuPosition.under,
               icon: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                user.photoURL!,
-              )),
+                  backgroundImage: (user.photoURL != null
+                      ? NetworkImage(
+                          user.photoURL!,
+                        )
+                      : null)),
               itemBuilder: (context) => [
                     const PopupMenuItem(
                       child: Text('Profile'),
