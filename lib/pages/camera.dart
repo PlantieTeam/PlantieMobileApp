@@ -9,15 +9,15 @@ class CameraPage extends StatefulWidget {
 
 class _MyWidgetState extends State<CameraPage> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-  // crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Center(
-          child: Text('Camera Picker Page'),
-        ),
-      ],
+    return Center(
+      child: Text("Camera Picker Openning..."),
     );
   }
 }
