@@ -27,10 +27,9 @@ class _CustomListViewState extends State<CustomListView> {
   Color listBorderButtomSide = const Color(0xffE6E6E6);
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return SizedBox(
-      height: (size.height) * 0.1,
-      width: size.width,
+      height: 80,
+      width: double.infinity,
       child: ListView.builder(
           itemCount: iconsList.length,
           scrollDirection: Axis.horizontal,
@@ -50,6 +49,7 @@ class _CustomListViewState extends State<CustomListView> {
                   padding: const EdgeInsetsDirectional.fromSTEB(
                       14.0, 14.0, 14.0, 18),
                   child: Image.asset(
+                    height: 50,
                     iconsList[index],
                   )),
             );
