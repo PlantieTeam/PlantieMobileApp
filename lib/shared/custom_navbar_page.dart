@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/pages/camera.dart';
+import 'package:plantie/pages/camera_capture.dart';
 import 'package:plantie/pages/community_page.dart';
 import 'package:plantie/pages/diagnosis_page.dart';
 import 'package:plantie/pages/home_page.dart';
@@ -20,13 +22,24 @@ class _MyWidgetState extends State<CustomNavBar> {
   int _currentIndex = 0;
 
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = const HomePage();
+  List<Widget> screens = [
+    const HomePage(),
+    const CommunityPage(),
+    const CameraPage(),
+    const ProfilePage(),
+    const DiagnosisPage(),
+  ];
   Color secondaryColor = const Color(0x7f1A6158);
   Color primaryColor = const Color(0xff47B88A);
   final User user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
-    const double iconsSize = 10;
+    if (_currentIndex != 2) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+      ));
+    }
     return SafeArea(
         child: Scaffold(
       // drawer: const Drawer(),
@@ -70,7 +83,7 @@ class _MyWidgetState extends State<CustomNavBar> {
       ),
       body: PageStorage(
         bucket: bucket,
-        child: currentScreen,
+        child: screens[_currentIndex],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
@@ -78,8 +91,14 @@ class _MyWidgetState extends State<CustomNavBar> {
         shape: const CircleBorder(),
         onPressed: () {
           setState(() {
-            currentScreen = const CameraPage();
+            _currentIndex = 2;
           });
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.black,
+          ));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CameraCapture()));
         },
         child: SvgPicture.asset(
           'assets/icons/camera.svg',
@@ -90,20 +109,19 @@ class _MyWidgetState extends State<CustomNavBar> {
       extendBody: true,
       bottomNavigationBar: ClipPath(
         child: BottomAppBar(
+            padding: EdgeInsets.zero,
             shape: const CircularNotchedRectangle(),
             notchMargin: 9,
-            color: Colors.white,
             clipBehavior: Clip.antiAlias,
-            child: SizedBox(
-              height: 73.0,
+            child: Container(
+              color: Colors.white,
+              width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   MaterialButton(
-                    minWidth: iconsSize,
                     onPressed: () {
                       setState(() {
-                        currentScreen = const HomePage();
                         _currentIndex = 0;
                       });
                     },
@@ -128,15 +146,14 @@ class _MyWidgetState extends State<CustomNavBar> {
                     ),
                   ),
                   MaterialButton(
-                    minWidth: iconsSize,
                     onPressed: () {
                       setState(() {
-                        currentScreen = const CommunityPage();
                         _currentIndex = 1;
                       });
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SvgPicture.asset(
                           'assets/icons/community.svg', // ignore: deprecated_member_use
@@ -156,11 +173,9 @@ class _MyWidgetState extends State<CustomNavBar> {
                     ),
                   ),
                   MaterialButton(
-                    minWidth: iconsSize,
                     onPressed: () {
                       setState(() {
-                        currentScreen = const ProfilePage();
-                        _currentIndex = 2;
+                        _currentIndex = 3;
                       });
                     },
                     child: Column(
@@ -184,11 +199,9 @@ class _MyWidgetState extends State<CustomNavBar> {
                     ),
                   ),
                   MaterialButton(
-                    minWidth: iconsSize,
                     onPressed: () {
                       setState(() {
-                        currentScreen = const DiagnosisPage();
-                        _currentIndex = 3;
+                        _currentIndex = 4;
                       });
                     },
                     child: Column(
