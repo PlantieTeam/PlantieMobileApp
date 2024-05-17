@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:plantie/main.dart';
+import 'package:plantie/pages/camera_result.dart';
 
 class CameraCapture extends StatefulWidget {
   const CameraCapture({super.key});
@@ -14,7 +17,7 @@ class CameraCapture extends StatefulWidget {
 class _CameraCaptureState extends State<CameraCapture> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-
+  File image = File('');
   @override
   void initState() {
     // TODO: implement initState
@@ -51,11 +54,16 @@ class _CameraCaptureState extends State<CameraCapture> {
                   children: [
                     IconButton.filled(
                       color: Colors.white,
-                      onPressed: () async {
+                      onPressed: () {
                         try {
-                          await _initializeControllerFuture;
-                          final image = await _controller.takePicture();
-                          print(image.mimeType);
+                          _controller.takePicture().then((e) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CameraResult(path: e.path)));
+                          });
+                          // print(image.length());
                         } catch (e) {}
                       },
                       icon: Icon(Icons.camera_alt),
