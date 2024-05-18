@@ -15,7 +15,7 @@ class _MyWidgetState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Home Page'),
+          Text('Profile'),
         ],
       ),
     );
