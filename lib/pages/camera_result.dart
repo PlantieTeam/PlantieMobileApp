@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
-
 import 'package:flutter/material.dart';
-import 'package:plantie/shared/custome_button.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 class CameraResult extends StatefulWidget {
@@ -17,6 +15,7 @@ class CameraResult extends StatefulWidget {
 class _CameraResultState extends State<CameraResult> {
   bool predicted = true;
   String detectedPlant = '';
+  late Uint8List _preprocessedImageBytes;
   var class_names = [
     'Apple___Apple_scab',
     'Apple___Black_rot',
@@ -56,17 +55,28 @@ class _CameraResultState extends State<CameraResult> {
     'olive_healthy',
     'olive_peacock_spot'
   ];
+  img.Image clipImage(img.Image image, int targetWidth, int targetHeight) {
+    int width = image.width;
+    int height = image.height;
+    int startX = (width - targetWidth) ~/ 2;
+    int startY = (height - targetHeight) ~/ 2;
+
+    return img.copyCrop(image, startX, startY, targetWidth, targetHeight);
+  }
+
   Float32List preprocessImage(Uint8List imageBytes) {
     // Decode the image
     img.Image image = img.decodeImage(imageBytes)!;
-
+    int targetWidth = (image.width).round();
+    int targetHeight = (image.width).round();
+    img.Image clippedImage = clipImage(image, targetWidth, targetHeight);
     // Resize the image to 224x224 (the expected input size for MobileNetV2)
-    img.Image resizedImage = img.copyResize(image, width: 224, height: 224);
-
-    // Normalize the pixel values to [0, 1] and create a Float32List
+    img.Image normalizedImage = img.normalize(clippedImage, 10, 230);
+    img.Image resizedImage =
+        img.copyResize(normalizedImage, width: 224, height: 224);
+    _preprocessedImageBytes = Uint8List.fromList(img.encodePng(resizedImage));
     Float32List input = Float32List(1 * 224 * 224 * 3);
     int bufferIndex = 0;
-
     for (int y = 0; y < 224; y++) {
       for (int x = 0; x < 224; x++) {
         int pixel = resizedImage.getPixel(x, y);
@@ -79,18 +89,13 @@ class _CameraResultState extends State<CameraResult> {
     return input;
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
   void predict() {
     Interpreter.fromAsset('assets/ml/model_mobilenetv2.tflite')
         .then((interpreter) {
       print('model Loaded');
       // Read image file and preprocess it
       Uint8List imageBytes = File(widget.path).readAsBytesSync();
+
       Float32List input = preprocessImage(imageBytes);
 
       // Define the output buffer with the shape [1, 37]
@@ -103,11 +108,13 @@ class _CameraResultState extends State<CameraResult> {
       double maxProbability = probabilities.reduce((a, b) => a > b ? a : b);
       int maxIndex = probabilities.indexOf(maxProbability);
 
-      print('Max Probability: $maxProbability');
+      print('Max Probability: $probabilities');
       print('Class Index: ${class_names[maxIndex]}');
       setState(() {
         // predicted = false;
-        detectedPlant = class_names[maxIndex];
+        detectedPlant = maxProbability >= 0.75
+            ? class_names[maxIndex] + " with probability $maxProbability"
+            : "Unknown";
       });
     }).catchError((err) {
       print(err);
@@ -115,21 +122,20 @@ class _CameraResultState extends State<CameraResult> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    predict();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: predicted
+      body: _preprocessedImageBytes.isNotEmpty
           ? Center(
               child: Column(
               children: [
-                Button(
-                    text: "Predict",
-                    onPressed: () {
-                      predict();
-                    }),
-                Image.file(
-                  File(widget.path),
-                ),
+                Image.memory(_preprocessedImageBytes),
                 Text('$detectedPlant')
               ],
             ))
