@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:plantie/main.dart';
 import 'package:plantie/pages/camera_result.dart';
 
@@ -30,11 +30,42 @@ class _CameraCaptureState extends State<CameraCapture> {
     ));
   }
 
+  Future getImageFromGallery() async {
+    ImagePicker _picker = ImagePicker();
+    var image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CameraResult(path: image.path)));
+  }
+
+  Future getImageFromCamera() async {
+    ImagePicker _picker = ImagePicker();
+    var image = await _picker.pickImage(source: ImageSource.camera);
+    if (image != null)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CameraResult(path: image.path)));
+  }
+
+  Future takePicture() async {
+    try {
+      _controller.takePicture().then((e) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CameraResult(path: e.path)));
+      });
+      // print(image.length());
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
@@ -50,24 +81,38 @@ class _CameraCaptureState extends State<CameraCapture> {
                       topRight: Radius.circular(20)),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    IconButton.filled(
-                      color: Colors.white,
+                    IconButton(
                       onPressed: () {
-                        try {
-                          _controller.takePicture().then((e) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CameraResult(path: e.path)));
-                          });
-                          // print(image.length());
-                        } catch (e) {}
+                        getImageFromGallery();
                       },
-                      icon: Icon(Icons.camera_alt),
-                    )
+                      icon: Icon(Icons.image_search),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          takePicture();
+                        },
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.circle_outlined,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                            Icon(
+                              Icons.circle,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ],
+                        )),
+                    IconButton(
+                        onPressed: () {
+                          getImageFromCamera();
+                        },
+                        icon: Icon(Icons.camera))
                   ],
                 ))),
         body: FutureBuilder<void>(
@@ -76,18 +121,27 @@ class _CameraCaptureState extends State<CameraCapture> {
             if (snapshot.connectionState == ConnectionState.done) {
               // If the Future is complete, display the preview.
               return Center(
-                child: Transform.scale(
-                    scale:
-                        1 / (_controller.value.aspectRatio * size.aspectRatio),
-                    alignment: Alignment.center,
+                  child: Stack(children: [
+                // Transform.scale(
+                //   scale: _controller.value.aspectRatio ,
+                //     // scaleY:
+                //         // 1 / (_controller.value.aspectRatio * size.aspectRatio),
+                //     alignment: Alignment.center,
+                // child:
+                Center(
                     child: CameraPreview(
-                      _controller,
-                      child: Center(
-                          child: SvgPicture.asset(
-                              "assets/images/capture_borders.svg",
-                              width: 150)),
-                    )),
-              );
+                  _controller,
+                )),
+                // )),
+                Center(
+                    child: Image.asset(
+                  scale: _controller.value.aspectRatio - 0.3,
+                  "assets/images/capture_borders.png",
+                  // width: MediaQuery.of(context).size.width * 0.5,
+                  // _controller.value.aspectRatio,
+                  // height: ,
+                ))
+              ]));
             } else {
               // Otherwise, display a loading indicator.
               return const Center(child: CircularProgressIndicator());
