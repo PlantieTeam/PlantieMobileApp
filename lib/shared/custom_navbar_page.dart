@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
-import 'package:plantie/pages/camera.dart';
 import 'package:plantie/pages/camera_capture.dart';
 import 'package:plantie/pages/community_page.dart';
 import 'package:plantie/pages/diagnosis_page.dart';
@@ -25,7 +24,6 @@ class _MyWidgetState extends State<CustomNavBar> {
   List<Widget> screens = [
     const HomePage(),
     const CommunityPage(),
-    const CameraPage(),
     const ProfilePage(),
     const DiagnosisPage(),
   ];
@@ -34,7 +32,7 @@ class _MyWidgetState extends State<CustomNavBar> {
   final User user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
-    if (_currentIndex != 2) {
+    if (_currentIndex != 3) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -91,7 +89,7 @@ class _MyWidgetState extends State<CustomNavBar> {
         shape: const CircleBorder(),
         onPressed: () {
           setState(() {
-            _currentIndex = 2;
+            _currentIndex = 3;
           });
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -175,7 +173,7 @@ class _MyWidgetState extends State<CustomNavBar> {
                   MaterialButton(
                     onPressed: () {
                       setState(() {
-                        _currentIndex = 3;
+                        _currentIndex = 2;
                       });
                     },
                     child: Column(
@@ -201,7 +199,7 @@ class _MyWidgetState extends State<CustomNavBar> {
                   MaterialButton(
                     onPressed: () {
                       setState(() {
-                        _currentIndex = 4;
+                        _currentIndex = 3;
                       });
                     },
                     child: Column(
