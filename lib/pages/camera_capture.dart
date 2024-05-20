@@ -25,29 +25,33 @@ class _CameraCaptureState extends State<CameraCapture> {
     _controller = CameraController(firstCamera, ResolutionPreset.max);
     _initializeControllerFuture = _controller.initialize();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.black,
     ));
   }
 
   Future getImageFromGallery() async {
-    ImagePicker _picker = ImagePicker();
-    var image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null)
+    ImagePicker picker = ImagePicker();
+    var image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
       Navigator.push(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
               builder: (context) => CameraResult(path: image.path)));
+    }
   }
 
   Future getImageFromCamera() async {
-    ImagePicker _picker = ImagePicker();
-    var image = await _picker.pickImage(source: ImageSource.camera);
-    if (image != null)
+    ImagePicker picker = ImagePicker();
+    var image = await picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
       Navigator.push(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
               builder: (context) => CameraResult(path: image.path)));
+    }
   }
 
   Future takePicture() async {
@@ -58,7 +62,7 @@ class _CameraCaptureState extends State<CameraCapture> {
             MaterialPageRoute(
                 builder: (context) => CameraResult(path: e.path)));
       });
-      // print(image.length());
+    // ignore: empty_catches
     } catch (e) {}
   }
 
@@ -75,7 +79,7 @@ class _CameraCaptureState extends State<CameraCapture> {
             // height: 100,
             child: Container(
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
@@ -87,13 +91,13 @@ class _CameraCaptureState extends State<CameraCapture> {
                       onPressed: () {
                         getImageFromGallery();
                       },
-                      icon: Icon(Icons.image_search),
+                      icon: const Icon(Icons.image_search),
                     ),
                     InkWell(
                         onTap: () {
                           takePicture();
                         },
-                        child: Stack(
+                        child: const Stack(
                           alignment: Alignment.center,
                           children: [
                             Icon(
@@ -112,7 +116,7 @@ class _CameraCaptureState extends State<CameraCapture> {
                         onPressed: () {
                           getImageFromCamera();
                         },
-                        icon: Icon(Icons.camera))
+                        icon: const Icon(Icons.camera))
                   ],
                 ))),
         body: FutureBuilder<void>(

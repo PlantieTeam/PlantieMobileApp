@@ -34,7 +34,7 @@ class _MyWidgetState extends State<CustomNavBar> {
   Widget build(BuildContext context) {
     if (_currentIndex != 3) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
       ));
     }
@@ -64,7 +64,7 @@ class _MyWidgetState extends State<CustomNavBar> {
                       child: Text('Profile'),
                     ),
                     PopupMenuItem(
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.logout),
                           SizedBox(width: 5),
@@ -92,11 +92,11 @@ class _MyWidgetState extends State<CustomNavBar> {
             _currentIndex = 3;
           });
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
             systemNavigationBarColor: Colors.black,
           ));
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CameraCapture()));
+              MaterialPageRoute(builder: (context) => const CameraCapture()));
         },
         child: SvgPicture.asset(
           'assets/icons/camera.svg',

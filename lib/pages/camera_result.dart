@@ -16,6 +16,7 @@ class _CameraResultState extends State<CameraResult> {
   bool predicted = true;
   String detectedPlant = '';
   late Uint8List _preprocessedImageBytes;
+  // ignore: non_constant_identifier_names
   var class_names = [
     'Apple___Apple_scab',
     'Apple___Black_rot',
@@ -92,7 +93,6 @@ class _CameraResultState extends State<CameraResult> {
   void predict() {
     Interpreter.fromAsset('assets/ml/model_mobilenetv2.tflite')
         .then((interpreter) {
-      print('model Loaded');
       // Read image file and preprocess it
       Uint8List imageBytes = File(widget.path).readAsBytesSync();
 
@@ -108,16 +108,13 @@ class _CameraResultState extends State<CameraResult> {
       double maxProbability = probabilities.reduce((a, b) => a > b ? a : b);
       int maxIndex = probabilities.indexOf(maxProbability);
 
-      print('Max Probability: $probabilities');
-      print('Class Index: ${class_names[maxIndex]}');
       setState(() {
         // predicted = false;
         detectedPlant = maxProbability >= 0.75
-            ? class_names[maxIndex] + " with probability $maxProbability"
+            ? "${class_names[maxIndex]} with probability $maxProbability"
             : "Unknown";
       });
     }).catchError((err) {
-      print(err);
     });
   }
 
@@ -136,10 +133,11 @@ class _CameraResultState extends State<CameraResult> {
               child: Column(
               children: [
                 Image.memory(_preprocessedImageBytes),
+                // ignore: unnecessary_string_interpolations
                 Text('$detectedPlant')
               ],
             ))
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );

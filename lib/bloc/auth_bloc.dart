@@ -14,28 +14,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final user = FirebaseAuth.instance.currentUser;
         if (user == null) {
-          emit(Unauthenticated());
+          emit(const Unauthenticated());
         } else {
           debugPrint("user: $user");
           emit(Authenticated(user: user));
         }
       } catch (e) {
-        print(e);
+        emit(const Unauthenticated());
       }
     });
     on<LoggedOut>((event, emit) async {
       // emit(Loading());
       await signOutWithGoogle();
-      emit(Unauthenticated());
+      emit(const Unauthenticated());
     });
     on<LoggedInWithGoogle>((event, emit) async {
       emit(Loading());
-      await signInWithGoogle();
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        emit(Unauthenticated());
-      } else
-        emit(Authenticated(user: user));
+      UserModel? user = await signInWithGoogle();
+      if (user == null && user!.userStatus == UserStatus.loggedOut) {
+        emit(const Unauthenticated());
+      } else {
+        emit(Authenticated(user: FirebaseAuth.instance.currentUser!));
+      }
     });
     on<SignUp>((event, emit) async {
       emit(Loading());
