@@ -25,35 +25,35 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
- 
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => PlantBloc()..add(LoadPlants()),
         ),
         BlocProvider(
-          create: (context) => AuthBloc()..add(AppStarted()),
+          create: (context) => AuthBloc()..add(const AppStarted()),
         ),
       ],
       child: MaterialApp(
         routes: {
           // '/': (context) => LandingPage(),
-          '/login': (context) => LoginPage(),
-          '/signup': (context) => SignupPage(),
+          '/login': (context) => const LoginPage(),
+          '/signup': (context) => const SignupPage(),
         },
         title: 'Plantie',
         home: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           if (state is AppStarted) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (state is Unauthenticated) {
-            return LandingPage();
+            return const LandingPage();
           }
           if (state is Authenticated) {
-            return CustomNavBar();
+            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            return const CustomNavBar();
           }
-          return Container(
-            child: const Text("ERROR"),
+          return const Center(
+            child: Text("ERROR"),
           );
         }),
         debugShowCheckedModeBanner: false,
