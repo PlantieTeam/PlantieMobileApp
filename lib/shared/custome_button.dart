@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Button extends StatefulWidget {
-  const Button({super.key, required this.text, required this.onPressed});
+  const Button(
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      this.width = double.infinity});
   final String text;
   final VoidCallback onPressed;
+  final double width;
   @override
   State<Button> createState() => _ButtonState();
 }
@@ -21,7 +26,7 @@ class _ButtonState extends State<Button> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
-          minimumSize: const Size.fromHeight(46)),
+          minimumSize: Size(widget.width, 46)),
       onPressed: widget.onPressed,
     );
   }
