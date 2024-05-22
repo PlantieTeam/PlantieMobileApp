@@ -18,6 +18,7 @@ class _CameraCaptureState extends State<CameraCapture> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   File image = File('');
+  bool isLoading = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -44,7 +45,13 @@ class _CameraCaptureState extends State<CameraCapture> {
 
   Future getImageFromCamera() async {
     ImagePicker picker = ImagePicker();
+    setState(() {
+      isLoading = true;
+    });
     var image = await picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      isLoading = false;
+    });
     if (image != null) {
       Navigator.push(
           // ignore: use_build_context_synchronously
@@ -56,13 +63,19 @@ class _CameraCaptureState extends State<CameraCapture> {
 
   Future takePicture() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       _controller.takePicture().then((e) {
+        setState(() {
+          isLoading = false;
+        });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => CameraResult(path: e.path)));
       });
-    // ignore: empty_catches
+      // ignore: empty_catches
     } catch (e) {}
   }
 
@@ -122,16 +135,10 @@ class _CameraCaptureState extends State<CameraCapture> {
         body: FutureBuilder<void>(
           future: _initializeControllerFuture,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If the Future is complete, display the preview.
+            if (snapshot.connectionState == ConnectionState.done &&
+                isLoading == false) {
               return Center(
                   child: Stack(children: [
-                // Transform.scale(
-                //   scale: _controller.value.aspectRatio ,
-                //     // scaleY:
-                //         // 1 / (_controller.value.aspectRatio * size.aspectRatio),
-                //     alignment: Alignment.center,
-                // child:
                 Center(
                     child: CameraPreview(
                   _controller,
@@ -141,13 +148,9 @@ class _CameraCaptureState extends State<CameraCapture> {
                     child: Image.asset(
                   scale: _controller.value.aspectRatio - 0.3,
                   "assets/images/capture_borders.png",
-                  // width: MediaQuery.of(context).size.width * 0.5,
-                  // _controller.value.aspectRatio,
-                  // height: ,
                 ))
               ]));
             } else {
-              // Otherwise, display a loading indicator.
               return const Center(child: CircularProgressIndicator());
             }
           },
