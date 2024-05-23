@@ -107,8 +107,9 @@ class _CameraResultState extends State<CameraResult> {
       List<double> probabilities = output[0];
       double maxProbability = probabilities.reduce((a, b) => a > b ? a : b);
       int maxIndex = probabilities.indexOf(maxProbability);
+      print(class_names[maxIndex]);
       setState(() {
-        index = maxIndex > dbDiseasesAR.length ? 1 : maxIndex;
+        index = maxIndex > dbDiseasesEN.length ? 1 : maxIndex;
         detectedPlant =
             maxProbability >= 0.75 ? class_names[maxIndex] : "Unknown";
       });
@@ -125,226 +126,293 @@ class _CameraResultState extends State<CameraResult> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: _preprocessedImageBytes.isNotEmpty && detectedPlant != 'Unknown'
-          ? lang == Langauge.arabic
-              ? SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: Center(
+    if (dbDiseasesEN[index].isHealthy) {
+      return Scaffold(
+          appBar: AppBar(),
+          body: _preprocessedImageBytes.isNotEmpty
+              ? Center(
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.95,
                       child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        child: Text(
-                          // detectedPlant.toString(),
-                          dbDiseasesAR[index].name,
-                          textAlign: TextAlign.right,
-                          textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                              fontSize: dbDiseasesAR[index].name.length > 15
-                                  ? 14
-                                  : 18.0,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xff47B88A)),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        height: 160,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(right: 20),
-                              child: Image.asset('assets/images/test.png'),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(right: 20),
-                              child: Image.asset('assets/images/test.png'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
+                        children: [
+                          Text(
+                            lang == Langauge.arabic
+                                ? dbDiseasesAR[index].name
+                                : dbDiseasesEN[index].name,
+                            style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff47B88A)),
+                          ),
+                          SizedBox(
+                              height: 160,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: dbDiseasesEN
+                                    .where((e) => e.name
+                                        .startsWith(dbDiseasesEN[index].name))
+                                    .map((e) => const Card())
+                                    .toList(),
+                              ))
+                        ],
+                      )))
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ));
+    } else {
+      return Scaffold(
+        appBar: AppBar(),
+        body: _preprocessedImageBytes.isNotEmpty && detectedPlant != 'Unknown'
+            ? lang == Langauge.arabic
+                ? SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: Center(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
                           width: MediaQuery.of(context).size.width * 0.95,
-                          child: const Text('عن المرض',
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff47B88A)))),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        child: Text(
-                          dbDiseasesAR[index].description,
-                          textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.justify,
-                          style: const TextStyle(color: Color(0xff465165)),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          child: Row(
+                          child: Text(
+                            dbDiseasesAR[index].name,
+                            textAlign: TextAlign.right,
                             textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                                fontSize: dbDiseasesAR[index].name.length > 20
+                                    ? 16
+                                    : 18.0,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xff47B88A)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          height: 160,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
                             children: [
-                              const Text('العلاج',
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff47B88A))),
-                              const SizedBox(
-                                width: 5,
+                              Container(
+                                margin: const EdgeInsets.only(right: 20),
+                                child: Image.asset('assets/images/test.png'),
                               ),
-                              Text(
-                                "المبيد الحشري ${dbDiseasesAR[index].medicine}",
-                                textDirection: TextDirection.rtl,
+                              Container(
+                                margin: const EdgeInsets.only(right: 20),
+                                child: Image.asset('assets/images/test.png'),
                               ),
                             ],
-                          )),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Button(
-                          text: "اوجد العلاج على الخريطه",
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          onPressed: () {}),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          child: const Text('النصائح',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff47B88A)))),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          child: Column(
-                            children: dbDiseasesAR[index].tips.map((e) {
-                              return Text(
-                                '•  ${e.toString()}',
-                                textAlign: TextAlign.justify,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: const Text('عن المرض',
+                                textAlign: TextAlign.right,
                                 textDirection: TextDirection.rtl,
-                                style:
-                                    const TextStyle(color: Color(0xff465165)),
-                              );
-                            }).toList(),
-                          )),
-                    ],
-                  )))
-              : Center(
-                  child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: Text(
-                        dbDiseasesEN[0].name,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: detectedPlant.length > 15 ? 14 : 18.0,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xff47B88A)),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      height: 160,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(right: 20),
-                            child: Image.asset('assets/images/test.png'),
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff47B88A)))),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: Text(
+                            dbDiseasesAR[index].description,
+                            textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(color: Color(0xff465165)),
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(right: 20),
-                            child: Image.asset('assets/images/test.png'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        child: const Text('About',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: Row(
+                              textDirection: TextDirection.rtl,
+                              children: [
+                                const Text('العلاج',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff47B88A))),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "المبيد الحشري ${dbDiseasesAR[index].medicine}",
+                                  textDirection: TextDirection.rtl,
+                                ),
+                              ],
+                            )),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Button(
+                            text: "اوجد العلاج على الخريطه",
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            onPressed: () {}),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: const Text('النصائح',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff47B88A)))),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: Column(
+                              textDirection: TextDirection.rtl,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: dbDiseasesAR[index].tips.map((e) {
+                                return Text(
+                                  '•  ${e.toString()}',
+                                  textAlign: TextAlign.justify,
+                                  textDirection: TextDirection.rtl,
+                                  style:
+                                      const TextStyle(color: Color(0xff465165)),
+                                );
+                              }).toList(),
+                            )),
+                      ],
+                    )))
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: Center(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: Text(
+                            // detectedPlant.toString(),
+                            dbDiseasesEN[index].name,
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: dbDiseasesEN[index].name.length > 20
+                                    ? 16
+                                    : 18.0,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xff47B88A)))),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: Text(
-                        dbDiseasesEN[0].description,
-                        textAlign: TextAlign.justify,
-                        style: const TextStyle(color: Color(0xff465165)),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Button(
-                        text: "Find the Treatment",
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        onPressed: () {}),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        child: const Text('Tips & Treat',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff47B88A)))),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: const Text(
-                        'Apply a fungicide when environmental conditions are favorable and the first sign of disease becomes apparent',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(color: Color(0xff465165)),
-                      ),
-                    ),
-                  ],
-                ))
-          : const Center(
-              child: Text('Unkonwn'),
-            ),
-    );
+                                color: const Color(0xff47B88A)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          height: 160,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(right: 20),
+                                child: Image.asset('assets/images/test.png'),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(right: 20),
+                                child: Image.asset('assets/images/test.png'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: const Text("About",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff47B88A)))),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: Text(
+                            dbDiseasesEN[index].description,
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(color: Color(0xff465165)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: Row(
+                              children: [
+                                const Text("Treatment",
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff47B88A))),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  dbDiseasesEN[index].medicine,
+                                ),
+                              ],
+                            )),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Button(
+                            text: "Find the Treatment in the Map",
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            onPressed: () {}),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: const Text('Tips',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff47B88A)))),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: dbDiseasesAR[index].tips.map((e) {
+                                return Text(
+                                  '•  ${e.toString()}',
+                                  textAlign: TextAlign.justify,
+                                  style:
+                                      const TextStyle(color: Color(0xff465165)),
+                                );
+                              }).toList(),
+                            )),
+                      ],
+                    )))
+            : Center(
+                child: Text(lang == Langauge.arabic ? "غير معروف" : 'Unkonwn'),
+              ),
+      );
+    }
   }
 }
