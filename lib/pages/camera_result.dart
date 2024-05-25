@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:plantie/models/disease.dart';
 import 'package:plantie/shared/custome_button.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:math' as math; // Import the math library
 
 enum Langauge { english, arabic }
 
@@ -22,45 +25,7 @@ class _CameraResultState extends State<CameraResult> {
   String detectedPlant = '';
   late Uint8List _preprocessedImageBytes;
   // ignore: non_constant_identifier_names
-  var class_names = [
-    'Apple Apple scab',
-    'Apple Black rot',
-    'Apple Cedar apple rust',
-    'Apple healthy',
-    'Bean angular leaf spot',
-    'Bean healthy',
-    'Bean rust',
-    'Corn Cercospora leaf spot Gray leaf spot',
-    'Corn Common rust',
-    'Corn Northern Leaf Blight',
-    'Corn healthy',
-    'Cucumber Anthracnose',
-    'Cucumber Gummy Stem Blight',
-    'Cucumber healthy',
-    'Grape Black rot',
-    'Grape Esca (Black Measles)',
-    'Grape Leaf blight (Isariopsis Leaf Spot)',
-    'Grape healthy',
-    'Pepper bell Bacterial spot',
-    'Pepper bell healthy',
-    'Potato Early blight',
-    'Potato Late blight',
-    'Potato healthy',
-    'Strawberry Leaf scorch',
-    'Strawberry healthy',
-    'Tomato Bacterial spot',
-    'Tomato Early blight',
-    'Tomato Late blight',
-    'Tomato Leaf Mold',
-    'Tomato Septoria leaf spot',
-    'Tomato Spider mites Two-spotted spider mite',
-    'Tomato Target Spot',
-    'Tomato Tomato mosaic virus',
-    'Tomato healthy',
-    'olive aculus olearius',
-    'olive healthy',
-    'olive peacock spot'
-  ];
+
   int index = 0;
   img.Image clipImage(img.Image image, int targetWidth, int targetHeight) {
     int width = image.width;
@@ -107,13 +72,74 @@ class _CameraResultState extends State<CameraResult> {
       List<double> probabilities = output[0];
       double maxProbability = probabilities.reduce((a, b) => a > b ? a : b);
       int maxIndex = probabilities.indexOf(maxProbability);
-      print(class_names[maxIndex]);
       setState(() {
         index = maxIndex > dbDiseasesEN.length ? 1 : maxIndex;
-        detectedPlant =
-            maxProbability >= 0.75 ? class_names[maxIndex] : "Unknown";
       });
     }).catchError((err) {});
+  }
+
+//  Map Part
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<void> openMap(double currentLatitude, double currentLongitude,
+      destinationLatitude, destinationLongitude) async {
+    const url = 'https://www.google.com/maps?dir=d';
+    final origin = '&saddr=$currentLatitude,$currentLongitude';
+    final destination = '&daddr=$destinationLatitude,$destinationLongitude';
+
+    final completeUrl = Uri.parse(url + origin + destination);
+
+    if (await canLaunchUrl(completeUrl)) {
+      await launchUrl(completeUrl);
+    } else {
+      throw 'Could not launch Google Maps.';
+    }
+  }
+
+  final destinations = [
+    {'latitude': 32.457871368616054, 'longitude': 35.295419643721054},
+    {'latitude': 32.521995409556375, 'longitude': 35.31512951071361},
+  ];
+  Future<void> launchMapForNearest(
+      List<Map<String, double>> destinations) async {
+    final currentLocation = await _determinePosition();
+    final currentLatitude = currentLocation.latitude;
+    final currentLongitude = currentLocation.longitude;
+
+    final distances = destinations.map((destination) {
+      final destinationLatitude = destination['latitude'];
+      final destinationLongitude = destination['longitude'];
+      return Geolocator.distanceBetween(currentLatitude, currentLongitude,
+          destinationLatitude!, destinationLongitude!);
+    }).toList();
+
+    final nearestIndex =
+        distances.indexOf(distances.reduce((a, b) => a > b ? b : a));
+
+    final nearestDestination = destinations[nearestIndex];
+    final nearestLatitude = nearestDestination['latitude'];
+    final nearestLongitude = nearestDestination['longitude'];
+    await openMap(
+        currentLatitude, currentLongitude, nearestLatitude, nearestLongitude);
   }
 
   @override
@@ -127,13 +153,23 @@ class _CameraResultState extends State<CameraResult> {
   @override
   Widget build(BuildContext context) {
     if (dbDiseasesEN[index].isHealthy) {
+      var lst = lang == Langauge.arabic
+          ? dbDiseasesAR.where((e) =>
+              e.name.endsWith(dbDiseasesAR[index].name.split(" ")[0]) &&
+              e.name != dbDiseasesAR[index].name)
+          : dbDiseasesEN.where((e) =>
+              e.name.startsWith(dbDiseasesEN[index].name.split(" ")[0]) &&
+              e.name != dbDiseasesEN[index].name);
       return Scaffold(
           appBar: AppBar(),
           body: _preprocessedImageBytes.isNotEmpty
               ? Center(
-                  child: SizedBox(
+                  child: Container(
+                      margin: const EdgeInsets.only(top: 10),
                       width: MediaQuery.of(context).size.width * 0.95,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             lang == Langauge.arabic
@@ -144,14 +180,46 @@ class _CameraResultState extends State<CameraResult> {
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff47B88A)),
                           ),
+                          const SizedBox(
+                            height: 50,
+                          ),
                           SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            child: lang == Langauge.arabic
+                                ? const Text(
+                                    "اشهر امراض النبات",
+                                    textDirection: TextDirection.rtl,
+                                  )
+                                : const Text("Plant's Popular Diseases"),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.95,
                               height: 160,
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
-                                children: dbDiseasesEN
-                                    .where((e) => e.name
-                                        .startsWith(dbDiseasesEN[index].name))
-                                    .map((e) => const Card())
+                                children: lst
+                                    .map((e) => Container(
+                                        width: 200,
+                                        margin:
+                                            const EdgeInsets.only(right: 10),
+                                        decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                            image: DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/images/test.png"),
+                                                fit: BoxFit.cover)),
+                                        child: Center(
+                                            child: Text(
+                                          e.name.toString(),
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16),
+                                        ))))
                                     .toList(),
                               ))
                         ],
@@ -257,7 +325,11 @@ class _CameraResultState extends State<CameraResult> {
                         Button(
                             text: "اوجد العلاج على الخريطه",
                             width: MediaQuery.of(context).size.width * 0.7,
-                            onPressed: () {}),
+                            onPressed: () {
+                              launchMapForNearest(destinations)
+                                  .then((onValue) {})
+                                  .catchError((onError) {});
+                            }),
                         const SizedBox(
                           height: 20,
                         ),
@@ -379,7 +451,11 @@ class _CameraResultState extends State<CameraResult> {
                         Button(
                             text: "Find the Treatment in the Map",
                             width: MediaQuery.of(context).size.width * 0.7,
-                            onPressed: () {}),
+                            onPressed: () {
+                              launchMapForNearest(destinations)
+                                  .then((onValue) {})
+                                  .catchError((onError) {});
+                            }),
                         const SizedBox(
                           height: 20,
                         ),
@@ -398,7 +474,7 @@ class _CameraResultState extends State<CameraResult> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: dbDiseasesAR[index].tips.map((e) {
+                              children: dbDiseasesEN[index].tips.map((e) {
                                 return Text(
                                   '•  ${e.toString()}',
                                   textAlign: TextAlign.justify,
