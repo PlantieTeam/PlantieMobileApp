@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:plantie/models/disease.dart';
 import 'package:plantie/shared/custome_button.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:math' as math; // Import the math library
+
 
 enum Langauge { english, arabic }
 
