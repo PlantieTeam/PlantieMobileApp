@@ -30,8 +30,8 @@ class _SignupPageState extends State<SignupPage> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width * 0.90,
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: Column(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: const Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -44,7 +44,7 @@ class _SignupPageState extends State<SignupPage> {
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   // margin: EdgeInsets.only(top: 50, bottom: 200),
                   height: MediaQuery.of(context).size.height * 0.3,
                   width: MediaQuery.of(context).size.width * 0.95,
@@ -58,18 +58,19 @@ class _SignupPageState extends State<SignupPage> {
                         state.message == "none"
                             ? Container()
                             : Container(
-                                margin: EdgeInsets.only(left: 10),
+                                margin: const EdgeInsets.only(left: 10),
                                 child: Text(
                                   state.message,
-                                  style: TextStyle(color: Colors.red),
+                                  style: const TextStyle(color: Colors.red),
                                 )),
                         ConstrainedBox(
-                            constraints: BoxConstraints.tightFor(height: 44),
+                            constraints:
+                                const BoxConstraints.tightFor(height: 44),
                             child: TextFormField(
                               onSaved: (newValue) => name = newValue!,
                               decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.only(left: 20, right: 20),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 20, right: 20),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
                                     borderSide: BorderSide(
@@ -79,20 +80,22 @@ class _SignupPageState extends State<SignupPage> {
                                   ),
                                   hintText: "Usermame",
                                   hintTextDirection: TextDirection.ltr,
-                                  hintStyle: TextStyle(color: Colors.black26),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.black26),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Color(0xff00796A)),
+                                    borderSide: const BorderSide(
+                                        color: Color(0xff00796A)),
                                   )),
                             )),
                         ConstrainedBox(
-                            constraints: BoxConstraints.tightFor(height: 44),
+                            constraints:
+                                const BoxConstraints.tightFor(height: 44),
                             child: TextFormField(
                               onSaved: (newValue) => email = newValue!,
                               decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.only(left: 20, right: 20),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 20, right: 20),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
                                     borderSide: BorderSide(
@@ -102,15 +105,17 @@ class _SignupPageState extends State<SignupPage> {
                                   ),
                                   hintText: "Email",
                                   hintTextDirection: TextDirection.ltr,
-                                  hintStyle: TextStyle(color: Colors.black26),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.black26),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Color(0xff00796A)),
+                                    borderSide: const BorderSide(
+                                        color: Color(0xff00796A)),
                                   )),
                             )),
                         ConstrainedBox(
-                            constraints: BoxConstraints.tightFor(height: 44),
+                            constraints:
+                                const BoxConstraints.tightFor(height: 44),
                             child: TextFormField(
                               onSaved: (newValue) => password = newValue!,
                               obscureText: _passwordInputVisablity,
@@ -126,8 +131,8 @@ class _SignupPageState extends State<SignupPage> {
                                       });
                                     },
                                   ),
-                                  contentPadding:
-                                      EdgeInsets.only(left: 20, right: 20),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 20, right: 20),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
                                     borderSide: BorderSide(
@@ -137,11 +142,12 @@ class _SignupPageState extends State<SignupPage> {
                                   ),
                                   hintText: "Password",
                                   hintTextDirection: TextDirection.ltr,
-                                  hintStyle: TextStyle(color: Colors.black26),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.black26),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
-                                    borderSide:
-                                        BorderSide(color: Color(0xff00796A)),
+                                    borderSide: const BorderSide(
+                                        color: Color(0xff00796A)),
                                   )),
                             )),
                       ],
@@ -174,19 +180,20 @@ class _SignupPageState extends State<SignupPage> {
                                                 context, '/login');
                                           },
                                         ),
-                                        content: Text(
+                                        content: const Text(
                                             "Check Your Email To verfy your account")));
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LoginPage()));
+                                        builder: (context) =>
+                                            const LoginPage()));
                               }
                             }
                           }),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("do you have an account?"),
+                          const Text("do you have an account?"),
                           TextButton(
                             onPressed: () {
                               Navigator.pushReplacementNamed(
@@ -194,11 +201,11 @@ class _SignupPageState extends State<SignupPage> {
                                 '/login',
                               );
                             },
-                            child: Text(
-                              "Login",
-                            ),
                             style: TextButton.styleFrom(
-                              foregroundColor: Color(0xff00796A),
+                              foregroundColor: const Color(0xff00796A),
+                            ),
+                            child: const Text(
+                              "Login",
                             ),
                           )
                         ],
@@ -210,55 +217,51 @@ class _SignupPageState extends State<SignupPage> {
                   Expanded(
                       child: Container(
                     height: 1,
-                    decoration: BoxDecoration(color: Colors.black26),
-                    margin: EdgeInsets.all(20),
+                    decoration: const BoxDecoration(color: Colors.black26),
+                    margin: const EdgeInsets.all(20),
                   )),
-                  Text(
+                  const Text(
                     "Or register by",
                     style: TextStyle(fontSize: 12),
                   ),
                   Expanded(
                       child: Container(
                     height: 1,
-                    decoration: BoxDecoration(color: Colors.black26),
-                    margin: EdgeInsets.all(20),
+                    decoration: const BoxDecoration(color: Colors.black26),
+                    margin: const EdgeInsets.all(20),
                   )),
                 ]),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton.filled(
-                        splashColor: Colors.white30,
-                        padding: EdgeInsets.all(10),
-                        style: IconButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            focusColor: Colors.black26,
-                            elevation: 1,
-                            shadowColor: Colors.white30),
-                        icon: SvgPicture.asset(
-                          'assets/icons/google_icon.svg',
-                        ),
-                        onPressed: () {
-                          BlocProvider.of<AuthBloc>(context)
-                              .add(LoggedInWithGoogle());
-                        },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton.filled(
+                      splashColor: Colors.white30,
+                      padding: const EdgeInsets.all(10),
+                      style: IconButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          focusColor: Colors.black26,
+                          elevation: 1,
+                          shadowColor: Colors.white30),
+                      icon: SvgPicture.asset(
+                        'assets/icons/google_icon.svg',
                       ),
-                    ],
-                  ),
+                      onPressed: () {
+                        BlocProvider.of<AuthBloc>(context)
+                            .add(const LoggedInWithGoogle());
+                      },
+                    ),
+                  ],
                 )
               ],
             );
           }
 
           if (state is Loading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (state is Authenticated) if (Navigator.canPop(context))
-            Navigator.pop(context);
-          return Center(
+          return const Center(
             child: Text("ERROR in LOGIN"),
           );
         }));

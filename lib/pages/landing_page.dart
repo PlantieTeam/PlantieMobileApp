@@ -7,7 +7,7 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      padding: EdgeInsets.only(top: 100, bottom: 20),
+      padding: const EdgeInsets.only(top: 100, bottom: 20),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -21,17 +21,15 @@ class LandingPage extends StatelessWidget {
                     'assets/images/Landing.png',
                     width: MediaQuery.of(context).size.width * 0.95,
                   ),
-                  Container(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Plantie',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.w700),
-                        ),
-                        Text("Get more crops with Planty's help!")
-                      ],
-                    ),
+                  const Column(
+                    children: [
+                      Text(
+                        'Plantie',
+                        style: TextStyle(
+                            fontSize: 24.0, fontWeight: FontWeight.w700),
+                      ),
+                      Text("Get more crops with Planty's help!")
+                    ],
                   ),
                   SizedBox(
                     width: 300,
@@ -55,7 +53,7 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                 ]),
-            Text(
+            const Text(
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12),
                 "By logging in or registering, you agree to our Terms of Service and Privacy Policy"),
