@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
+import 'package:plantie/pages/add_post_page.dart';
 import 'package:plantie/pages/camera_capture.dart';
 import 'package:plantie/pages/community_page.dart';
 import 'package:plantie/pages/diagnosis_page.dart';
@@ -88,21 +89,32 @@ class _MyWidgetState extends State<CustomNavBar> {
         backgroundColor: primaryColor,
         shape: const CircleBorder(),
         onPressed: () {
-          setState(() {
-            _currentIndex = 3;
-          });
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-          SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.black,
-          ));
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const CameraCapture()));
+          if (_currentIndex == 1) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const AddPostPage(),
+            ));
+          } else {
+            setState(() {
+              _currentIndex = 3;
+            });
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.black,
+            ));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const CameraCapture()));
+          }
         },
-        child: SvgPicture.asset(
-          'assets/icons/camera.svg',
-          color: Colors.white,
-          //: Colors.white,
-        ),
+        child: _currentIndex == 1
+            ? const Icon(
+                Icons.add,
+                color: Colors.white,
+              )
+            : SvgPicture.asset(
+                'assets/icons/camera.svg',
+                color: Colors.white,
+                //: Colors.white,
+              ),
       ),
       extendBody: true,
       bottomNavigationBar: ClipPath(
