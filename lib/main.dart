@@ -19,7 +19,6 @@ void main() async {
 
   runApp(const MainApp());
 }
-
 class MainApp extends StatelessWidget {
   const MainApp({Key? key}) : super(key: key);
 
@@ -49,11 +48,13 @@ class MainApp extends StatelessWidget {
             return const LandingPage();
           }
           if (state is Authenticated) {
-            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            // if (Navigator.of(context).canPop()) Navigator.of(context).pop();
             return const CustomNavBar();
           }
-          return const Center(
-            child: Text("ERROR"),
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }),
         debugShowCheckedModeBanner: false,
