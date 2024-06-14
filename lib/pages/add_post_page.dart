@@ -5,7 +5,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:plantie/bloc/post_bloc.dart';
-import 'package:plantie/models/plant.dart';
+import 'package:plantie/models/plantEn.dart';
 import 'package:plantie/shared/custome_button.dart';
 
 class AddPostPage extends StatefulWidget {
