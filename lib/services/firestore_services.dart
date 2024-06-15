@@ -36,19 +36,22 @@ fit(list) {
       comments: comments,
       imageUrls: imageUrls,
       likes: likes,
-      uploadDate: DateTime.now(),
+      uploadDate: doc['uploadDate'].toDate(),
     ));
   }
   return posts;
 }
 
-Future<List<Post>> getPosts() async {
-  final collection = FirebaseFirestore.instance.collection('Post');
+Future<List<Post>> getPosts(int limit) async {
+  final collection = FirebaseFirestore.instance
+      .collection('Post')
+      // .orderBy("uploadDate", descending: true)
+      .limit(limit);
   var querySnapshot = await collection.get();
   List<Post> posts = [];
 
   posts = fit(querySnapshot.docs);
-
+  print(posts.length);
   return posts;
 }
 
@@ -96,6 +99,6 @@ Future<List<Post>> updatePost(String id, Post post) async {
   final collection = FirebaseFirestore.instance.collection('Post');
   var doc = collection.doc(id);
   await doc.update(post.toJson());
-  var posts = await getPosts();
+  var posts = await getPosts(5);
   return posts;
 }

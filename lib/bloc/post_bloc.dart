@@ -12,9 +12,10 @@ part 'post_state.dart';
 class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc() : super(PostInitial()) {
     on<GetPosts>((event, emit) async {
-      emit(PostInitial());
+      // emit(PostInitial());
       // TODO: implement event handler
-      var posts = await getPosts();
+      var posts = await getPosts(event.limit);
+      print(posts.length);
       emit(PostLoaded(posts: posts));
     });
     on<LikePost>((event, emit) async {
@@ -65,7 +66,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           imageUrls: imageUrls,
           likes: const []));
 
-      emit(PostLoaded(posts: await getPosts()));
+      emit(PostLoaded(posts: await getPosts(5)));
     });
   }
 }
