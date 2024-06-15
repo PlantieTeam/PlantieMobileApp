@@ -44,7 +44,7 @@ class _MyWidgetState extends State<CustomNavBar> {
       // drawer: const Drawer(),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
           'Plantie',

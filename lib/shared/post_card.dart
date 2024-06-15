@@ -1,18 +1,24 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:plantie/models/Post.dart';
 
 class PostCard extends StatefulWidget {
-  const PostCard(
-      {super.key,
-      required this.post,
-      required this.onLikePressed,
-      this.onCommentPressed = null,
-      this.enableMedia = true});
+  const PostCard({
+    super.key,
+    required this.post,
+    required this.onLikePressed,
+    this.onCommentPressed = null,
+    this.enableMedia = true,
+    this.imagePreview = null,
+  });
   final Post post;
   final VoidCallback onLikePressed;
   final VoidCallback? onCommentPressed;
-  final enableMedia;
+  final bool enableMedia;
+  final List<XFile>? imagePreview;
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -20,10 +26,30 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLiked = false;
+
+  String date = "";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+      Duration diff = DateTime.now().difference(widget.post.uploadDate);
+      if(diff.inDays > 0){
+        setState(() {
+          date = "${diff.inDays}d";
+        });
+      }
+      else if(diff.inHours > 0){
+        setState(() {
+          date = "${diff.inHours}h";
+        });
+      }
+      else if(diff.inMinutes > 0){
+        setState(() {
+          date = "${diff.inMinutes}m";
+        });
+      }
+     
+   
     isLiked =
         widget.post.likes.contains(FirebaseAuth.instance.currentUser!.uid);
   }
@@ -53,9 +79,9 @@ class _PostCardState extends State<PostCard> {
                     Text(widget.post.owner.name),
                     Row(
                       children: [
-                        const Text(
-                          "1 d   •   ",
-                          style: TextStyle(
+                        Text(
+                          "${date}  •   ",
+                          style: const TextStyle(
                               color: Color(0xff777777),
                               fontSize: 10,
                               fontWeight: FontWeight.w400),
@@ -91,13 +117,31 @@ class _PostCardState extends State<PostCard> {
             ? Container(
                 width: MediaQuery.of(context).size.width,
                 height: 200,
-                decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    image: DecorationImage(
-                      image: NetworkImage(widget.post.imageUrls[0]),
-                      fit: BoxFit.cover,
-                    )),
-              )
+                child: SingleChildScrollView(
+                    physics: const PageScrollPhysics(),
+                    controller: PageController(
+                      viewportFraction:
+                          1 - (1 / MediaQuery.of(context).size.width),
+                    ),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                        children: widget.imagePreview != null
+                            ? widget.post.imageUrls.map((image) {
+                                return Image.file(
+                                  File(image),
+                                  width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.cover,
+                                );
+                              }).toList()
+                            : widget.post.imageUrls.map((image) {
+                                return Image.network(
+                                  image,
+                                  width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.cover,
+                                );
+                              }).toList()
+                        //     : ,
+                        )))
             : Container(),
         const SizedBox(height: 10),
         Container(

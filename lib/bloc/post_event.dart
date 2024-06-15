@@ -7,7 +7,12 @@ sealed class PostEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetPosts extends PostEvent {}
+class GetPosts extends PostEvent {
+  final int limit;
+  GetPosts({required this.limit});
+  @override
+  List<Object> get props => [limit];
+}
 
 class AddPost extends PostEvent {
   final String body;

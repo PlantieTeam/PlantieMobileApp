@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
 import 'package:plantie/pages/fertilizer_calculator_page.dart';
 import 'package:plantie/shared/custom_listView.dart';
@@ -19,7 +20,11 @@ class _MyWidgetState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<PlantBloc, PlantState>(builder: (context, state) {
       if (state is PlantInitial) {
-        return const Center(child: CircularProgressIndicator());
+        return Center(
+            child: SpinKitFadingFour(
+          color: Color(0xff47B88A),
+          size: 40,
+        ));
       }
       if (state is PlantLoaded &&
           state.plants.isNotEmpty &&
