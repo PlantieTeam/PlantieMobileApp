@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:plantie/bloc/post_bloc.dart';
 import 'package:plantie/pages/comment_page.dart';
 import 'package:plantie/shared/post_card.dart';
@@ -12,6 +13,7 @@ class CommunityPage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<CommunityPage> {
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -68,26 +70,69 @@ class _MyWidgetState extends State<CommunityPage> {
                 bloc: BlocProvider.of<PostBloc>(context),
                 builder: (context, state) {
                   if (state is PostLoaded) {
-                    return ListView.builder(
-                        itemCount:
-                            state.posts.length > 4 ? 4 : state.posts.length,
-                        itemBuilder: (context, index) {
-                          return PostCard(
-                              post: state.posts[index],
-                              onCommentPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => CommentPage(
-                                          post: state.posts[index],
-                                        )));
-                              },
-                              onLikePressed: () {
-                                context
-                                    .read<PostBloc>()
-                                    .add(LikePost(id: state.posts[index].id));
-                              });
-                        });
+                    print(state.posts.length);
+                    return RefreshIndicator(
+                        triggerMode: RefreshIndicatorTriggerMode.anywhere,
+                        onRefresh: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          Future.delayed(Duration(seconds: 2), () {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
+                          BlocProvider.of<PostBloc>(context)
+                              .add(GetPosts(limit: state.posts.length + 5));
+                        },
+                        child: ListView.builder(
+                            itemCount: state.posts.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == state.posts.length) {
+                                return Center(
+                                    child: TextButton.icon(
+                                        onPressed: () {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          Future.delayed(Duration(seconds: 2),
+                                              () {
+                                            setState(() {
+                                              isLoading = false;
+                                            });
+                                          });
+                                          BlocProvider.of<PostBloc>(context)
+                                              .add(GetPosts(
+                                                  limit:
+                                                      state.posts.length + 5));
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Color(0xff47B88A),
+                                        ),
+                                        icon: const Icon(Icons.post_add),
+                                        label: Text("Load More")));
+                              }
+                              return PostCard(
+                                  post: state.posts[index],
+                                  onCommentPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => CommentPage(
+                                                  post: state.posts[index],
+                                                )));
+                                  },
+                                  onLikePressed: () {
+                                    context.read<PostBloc>().add(
+                                        LikePost(id: state.posts[index].id));
+                                  });
+                            }));
                   }
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: SpinKitFadingFour(
+                    color: Color(0xff47B88A),
+                    size: 40,
+                  ));
                 }),
           ))
         ],

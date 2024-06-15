@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:plantie/bloc/post_bloc.dart';
-import 'package:plantie/models/plant.dart';
-import 'package:plantie/shared/custome_button.dart';
+import 'package:plantie/pages/add_post_confirm.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({super.key});
@@ -16,8 +13,9 @@ class AddPostPage extends StatefulWidget {
 }
 
 class _AddPostPageState extends State<AddPostPage> {
-  String? _menuValue;
   String? _textValue;
+  final _textController = TextEditingController();
+  TextDirection _textDirection = TextDirection.ltr;
   final _key = GlobalKey<FormState>();
   int? tappedIndex;
   List<XFile> imagePreview = [];
@@ -28,27 +26,77 @@ class _AddPostPageState extends State<AddPostPage> {
     return result;
   }
 
+  void _handleTextChange() {
+    String? text = _textController.text;
+    if (text.isNotEmpty) {
+      // Check if the last character is Arabic
+      bool isArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(text[0]);
+      setState(() {
+        _textDirection = isArabic ? TextDirection.rtl : TextDirection.ltr;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(leading: const BackButton(), title: const Text("Add Post")),
+        appBar: AppBar(
+          leading: const BackButton(),
+          title: const Text("Add Post"),
+          actions: [
+            TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color(0xff47B88A),
+                ),
+                icon: const Icon(Icons.check),
+                label: const Text("Next"),
+                onPressed: () {
+                  if (!_key.currentState!.validate()) {
+                    return;
+                  }
+                  _key.currentState!.save();
+                  if (imagePreview.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Please select image"),
+                    ));
+                  } else {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AddPostConfirm(
+                            body: _textValue!, imagePreview: imagePreview)));
+                  }
+                })
+          ],
+        ),
         body: Center(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: Form(
-              key: _key,
+            child: Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: const BoxDecoration(
+              // color: Colors.white70,
+              ),
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Form(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            key: _key,
+            child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextFormField(
-                    minLines: 4,
-                    maxLines: 8,
+                    minLines: 15,
+                    maxLines: 15,
+                    onChanged: (value) {
+                      _handleTextChange();
+                    },
+                    controller: _textController,
+                    textDirection: _textDirection,
                     onSaved: (value) {
                       _textValue = value;
                     },
                     decoration: const InputDecoration(
-                      hintText: 'Body',
+                      hintText: 'Write something here',
+                      border: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -57,59 +105,6 @@ class _AddPostPageState extends State<AddPostPage> {
                         return null;
                       }
                     },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  DropdownButtonFormField(
-                      menuMaxHeight: 200,
-                      decoration: const InputDecoration(
-                        hintText: "Category",
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _menuValue = value as String;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please choose one category';
-                        } else {
-                          return null;
-                        }
-                      },
-                      onSaved: (value) {
-                        _menuValue = value as String;
-                      },
-                      items: dbPlants
-                          .map((e) => DropdownMenuItem(
-                                value: e.name,
-                                child: Text(e.name),
-                              ))
-                          .toList()),
-                  TextButton.icon(
-                    style: TextButton.styleFrom(
-                        iconColor: const Color(0xff47B88A),
-                        textStyle: const TextStyle(color: Colors.black)),
-                    onPressed: () {
-                      ImagePicker picker = ImagePicker();
-                      picker
-                          .pickImage(source: ImageSource.gallery)
-                          .then((value) {
-                        if (value != null) {
-                          compressImage(value).then((value) {
-                            print(value!.path);
-                            setState(() {
-                              imagePreview.add(value);
-                            });
-                          }).catchError((e) {
-                            print(e);
-                          });
-                        }
-                      });
-                    },
-                    label: const Text("Photos"),
-                    icon: const Icon(Icons.photo_library),
                   ),
                   SizedBox(
                     height: 150,
@@ -149,25 +144,46 @@ class _AddPostPageState extends State<AddPostPage> {
                                   ]));
                         }),
                   ),
-                  Button(
-                      text: "Post",
-                      onPressed: () {
-                        if (_key.currentState!.validate()) {
-                          _key.currentState!.save();
-
-                          BlocProvider.of<PostBloc>(context).add(AddPost(
-                            body: _textValue!,
-                            type: _menuValue!,
-                            images:
-                                imagePreview.map((e) => File(e.path)).toList(),
-                          ));
-                        }
-                        // print("Post");
-                      })
+                  Container(
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        style: TextButton.styleFrom(
+                            iconColor: const Color(0xff47B88A),
+                            textStyle: const TextStyle(color: Colors.black)),
+                        onPressed: () {
+                          ImagePicker picker = ImagePicker();
+                          picker
+                              .pickImage(source: ImageSource.gallery)
+                              .then((value) {
+                            if (value != null) {
+                              compressImage(value).then((value) {
+                                print(value!.path);
+                                if (imagePreview.length >= 4) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text(
+                                        "You can't upload more than 4 images"),
+                                  ));
+                                  return;
+                                }
+                                setState(() {
+                                  imagePreview.add(value);
+                                });
+                              }).catchError((e) {
+                                print(e);
+                              });
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.photo),
+                      )),
+                  const SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ),
           ),
-        ));
+        )));
   }
 }

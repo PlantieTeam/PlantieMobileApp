@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/ahmadqasem/Developer/flutter
-FLUTTER_APPLICATION_PATH=/Users/ahmadqasem/ahmad/Senior/PlantieMobileApp
+FLUTTER_ROOT=C:\flutter
+FLUTTER_APPLICATION_PATH=C:\Users\ahmadilawa\Documents\PlantieMobileApp
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=0.1.0
