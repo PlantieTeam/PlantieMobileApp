@@ -33,8 +33,10 @@ dependencies:
   flutter_image_compress: ^2.3.0
   flutter_spinkit: ^5.2.1
   sign_in_with_apple: ^6.1.1
-
-
+  http: ^0.13.4
+  cached_network_image: ^3.3.1
+  shared_preferences: ^2.2.3
+  photo_view: ^0.15.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,4 +47,5 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/ml/
+    - assets/images/disease/
   uses-material-design: true

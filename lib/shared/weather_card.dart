@@ -13,20 +13,21 @@ const Map<WeatherStatus, List<Color>> colors = {
 };
 
 class WeatherCard extends StatefulWidget {
-  const WeatherCard(
-      {super.key,
-      required this.status,
-      required this.location,
-      required this.temperature,
-      required this.suggestion,
-      required this.timeOfRain,
-      required this.humidity});
-  final WeatherStatus status;
+  const WeatherCard({
+    super.key,
+    required this.status,
+    required this.location,
+    required this.temperature,
+    required this.suggestion,
+    required this.timeOfRain,
+    required this.humidity,
+  });
+  final String status;
   final String location;
-  final int temperature;
+  final double temperature;
   final String timeOfRain;
   final String suggestion;
-  final String humidity;
+  final int humidity;
 
   @override
   State<WeatherCard> createState() => _WeatherCardState();
@@ -34,29 +35,32 @@ class WeatherCard extends StatefulWidget {
 
 class _WeatherCardState extends State<WeatherCard> {
   String img = 'weather_sunny.svg';
-  String status = 'Partly Cloudy';
+  WeatherStatus status = WeatherStatus.partlyCloudy;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     switch (widget.status) {
-      case WeatherStatus.partlyCloudy:
+      case "Partly Cloudy":
         img = 'weather_partly_cloudy.svg';
-        status = 'Partly Cloudy';
+        status = WeatherStatus.partlyCloudy;
         break;
-      case WeatherStatus.sunny:
+      case "Clear":
         img = 'weather_sunny.svg';
-        status = 'Sunny';
+        status = WeatherStatus.sunny;
         break;
-      case WeatherStatus.cloudy:
+      case "Cloudy":
         img = 'weather_cloudy.svg';
-        status = 'Cloudy';
+        status = WeatherStatus.cloudy;
         break;
-      case WeatherStatus.rainy:
+      case "Rainy":
         img = 'weather_rainy.svg';
-        status = 'Rainy';
+        status = WeatherStatus.rainy;
         break;
+      default:
+        img = 'weather_partly_cloudy.svg';
+        status = WeatherStatus.partlyCloudy;
     }
   }
 
@@ -75,7 +79,7 @@ class _WeatherCardState extends State<WeatherCard> {
             gradient: LinearGradient(
                 begin: Alignment.bottomLeft,
                 end: Alignment.topRight,
-                colors: colors[widget.status]!)),
+                colors: colors[status]!)),
         child: Container(
             width: 370,
             height: 183,
@@ -95,7 +99,7 @@ class _WeatherCardState extends State<WeatherCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      status,
+                      widget.status,
                       style: const TextStyle(
                           fontSize: 12,
                           color: Colors.white,
@@ -126,13 +130,14 @@ class _WeatherCardState extends State<WeatherCard> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
-                    Text('${widget.temperature.toString()} °',
+                    Text(
+                        '${((widget.temperature - 32) * 5 / 9).toStringAsFixed(2)} °',
                         style: const TextStyle(
                             fontSize: 24,
                             color: Colors.white,
                             fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
-                    Text("${((widget.temperature * 9 / 5) + 32).toString()} F°",
+                    Text("${widget.temperature.toString()} F°",
                         style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -150,7 +155,7 @@ class _WeatherCardState extends State<WeatherCard> {
             gradient: LinearGradient(
                 begin: Alignment.bottomLeft,
                 end: Alignment.topRight,
-                colors: colors[widget.status]!)),
+                colors: colors[status]!)),
         child: Container(
           width: 370,
           height: 183,
@@ -173,13 +178,13 @@ class _WeatherCardState extends State<WeatherCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        status,
+                        widget.status,
                         style: const TextStyle(
                             fontSize: 12,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text('${widget.temperature.toString()}° C',
+                      Text('${widget.temperature.toString()}° F',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 24,
@@ -229,7 +234,7 @@ class _WeatherCardState extends State<WeatherCard> {
                     children: [
                       SvgPicture.asset("assets/images/weather_humidity.svg"),
                       Text(
-                        widget.humidity,
+                        widget.humidity.toString(),
                         style: const TextStyle(color: Colors.white),
                       ),
                     ],

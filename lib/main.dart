@@ -11,6 +11,7 @@ import 'package:plantie/pages/landing_page.dart';
 import 'package:plantie/pages/login_page.dart';
 import 'package:plantie/pages/signup_page.dart';
 import 'package:plantie/shared/custom_navbar_page.dart';
+import 'package:plantie/shared/loader.dart';
 
 late CameraDescription firstCamera;
 void main() async {
@@ -75,9 +76,7 @@ class MainApp extends StatelessWidget {
             return const CustomNavBar();
           }
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body:Loader()
           );
         }),
         debugShowCheckedModeBanner: false,

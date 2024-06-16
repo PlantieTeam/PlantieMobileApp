@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:plantie/models/Post.dart';
 import 'package:plantie/models/user.dart';
+import 'package:plantie/services/firestore_services.dart';
 
 Future<UserModel?> signInWithGoogle() async {
   // Trigger the authentication flow
@@ -15,7 +17,12 @@ Future<UserModel?> signInWithGoogle() async {
         accessToken: googleAuth.accessToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      var user = await FirebaseAuth.instance.signInWithCredential(credential);
+      addUser(PostUser(
+          id: user.user!.uid,
+          name: user.user!.displayName!,
+          email: user.user!.email!,
+          imageUrl: user.user!.photoURL!));
       return const UserModel(userStatus: UserStatus.loggedIn);
     }
   } catch (e) {
@@ -45,6 +52,11 @@ Future<UserModel> signUpWithEmailAndPassword(
 
     result.user!.sendEmailVerification();
     result.user!.updateDisplayName(name);
+    addUser(PostUser(
+        id: result.user!.uid,
+        name: result.user!.displayName!,
+        email: result.user!.email!,
+        imageUrl: result.user!.photoURL!));
     return const UserModel(
         userError: UserError.none, userStatus: UserStatus.loggedOut);
   } on FirebaseAuthException catch (e) {

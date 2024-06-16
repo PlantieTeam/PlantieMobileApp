@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/post_bloc.dart';
 import 'package:plantie/models/Post.dart';
 import 'package:plantie/models/plant.dart';
+import 'package:plantie/shared/loader.dart';
 import 'package:plantie/shared/post_card.dart';
 
 class AddPostConfirm extends StatefulWidget {
@@ -69,9 +70,7 @@ class _AddPostConfirmState extends State<AddPostConfirm> {
               }
             },
             child: isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? const Loader()
                 : Center(
                     child: Container(
                     height: MediaQuery.of(context).size.height,
@@ -99,6 +98,7 @@ class _AddPostConfirmState extends State<AddPostConfirm> {
                                   type: type.toLowerCase(),
                                   uploadDate: DateTime.now(),
                                   owner: PostUser(
+                                    id: FirebaseAuth.instance.currentUser!.uid,
                                     name: FirebaseAuth
                                         .instance.currentUser!.displayName!,
                                     imageUrl: FirebaseAuth

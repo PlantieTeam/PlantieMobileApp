@@ -1,11 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:plantie/bloc/post_bloc.dart';
 import 'package:plantie/models/Post.dart';
 import 'package:plantie/shared/comment_card.dart';
-
+import 'package:plantie/shared/image_preview.dart';
 
 class CommentPage extends StatefulWidget {
   const CommentPage({super.key, required this.post});
@@ -20,6 +22,15 @@ class _CommentPageState extends State<CommentPage> {
   final _listController = ScrollController();
   double height = 50;
   bool fontLess = false;
+  void _showImagePreview(BuildContext context, String imagePath) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ImagePreviewScreen(imagePath: imagePath),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: SafeArea(child: BlocBuilder<PostBloc, PostState>(
@@ -43,11 +54,34 @@ class _CommentPageState extends State<CommentPage> {
                         Container(
                           height: 215 + 50 - height,
                           width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(post.imageUrls[0]),
-                          )),
+                          child: SingleChildScrollView(
+                              physics: const PageScrollPhysics(),
+                              controller: PageController(
+                                viewportFraction:
+                                    1 - (1 / MediaQuery.of(context).size.width),
+                              ),
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                  children: post.imageUrls.map((image) {
+                                return GestureDetector(
+                                    onTap: () =>
+                                        _showImagePreview(context, image),
+                                    child: CachedNetworkImage(
+                                      imageUrl: image,
+                                      fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width,
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) =>
+                                              const SpinKitFadingFour(
+                                        color: Colors.green,
+                                        size: 20,
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ));
+                              }).toList()
+                                  //     : ,
+                                  )),
                         ),
                         IconButton(
                           iconSize: 25,
@@ -127,13 +161,7 @@ class _CommentPageState extends State<CommentPage> {
                         itemCount: post.comments.length,
                         itemBuilder: (context, index) {
                           return CommentCard(
-                              direction: FirebaseAuth
-                                          .instance.currentUser!.email ==
-                                      post
-                                          .comments[
-                                              post.comments.length - 1 - index]
-                                          .owner
-                                          .email
+                              direction: FirebaseAuth.instance.currentUser!.email == post.comments[post.comments.length - 1 - index].owner.email
                                   ? TextDirection.ltr
                                   : TextDirection.rtl,
                               color: FirebaseAuth.instance.currentUser!.email ==
@@ -144,14 +172,18 @@ class _CommentPageState extends State<CommentPage> {
                                           .email
                                   ? const Color.fromARGB(255, 252, 255, 253)
                                   : Colors.white,
-                              comment: post
-                                  .comments[post.comments.length - 1 - index]
-                                  .copyWith(
-                                      owner: post
+                              comment: FirebaseAuth.instance.currentUser!.email ==
+                                      post
                                           .comments[
                                               post.comments.length - 1 - index]
                                           .owner
-                                          .copyWith(name: "you")));
+                                          .email
+                                  ? post.comments[post.comments.length - 1 - index].copyWith(
+                                      owner: post
+                                          .comments[post.comments.length - 1 - index]
+                                          .owner
+                                          .copyWith(name: "you"))
+                                  : post.comments[post.comments.length - 1 - index]);
                         })),
                 Container(
                     margin: const EdgeInsets.only(bottom: 5, top: 5),
@@ -237,6 +269,8 @@ class _CommentPageState extends State<CommentPage> {
                                     comment: PostComment(
                                       body: _textController.text,
                                       owner: PostUser(
+                                        id: FirebaseAuth
+                                            .instance.currentUser!.uid,
                                         name: FirebaseAuth
                                             .instance.currentUser!.displayName!,
                                         email: FirebaseAuth

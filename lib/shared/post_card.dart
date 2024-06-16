@@ -1,18 +1,21 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:plantie/models/Post.dart';
+import 'package:plantie/shared/image_preview.dart';
+import 'package:plantie/shared/loader.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({
     super.key,
     required this.post,
     required this.onLikePressed,
-    this.onCommentPressed = null,
+    this.onCommentPressed,
     this.enableMedia = true,
-    this.imagePreview = null,
+    this.imagePreview,
   });
   final Post post;
   final VoidCallback onLikePressed;
@@ -28,28 +31,35 @@ class _PostCardState extends State<PostCard> {
   bool isLiked = false;
 
   String date = "";
+
+  void _showImagePreview(BuildContext context, String imagePath) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ImagePreviewScreen(imagePath: imagePath),
+      ),
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-      Duration diff = DateTime.now().difference(widget.post.uploadDate);
-      if(diff.inDays > 0){
-        setState(() {
-          date = "${diff.inDays}d";
-        });
-      }
-      else if(diff.inHours > 0){
-        setState(() {
-          date = "${diff.inHours}h";
-        });
-      }
-      else if(diff.inMinutes > 0){
-        setState(() {
-          date = "${diff.inMinutes}m";
-        });
-      }
-     
-   
+    Duration diff = DateTime.now().difference(widget.post.uploadDate);
+    if (diff.inDays > 0) {
+      setState(() {
+        date = "${diff.inDays}d";
+      });
+    } else if (diff.inHours > 0) {
+      setState(() {
+        date = "${diff.inHours}h";
+      });
+    } else if (diff.inMinutes > 0) {
+      setState(() {
+        date = "${diff.inMinutes}m";
+      });
+    }
+
     isLiked =
         widget.post.likes.contains(FirebaseAuth.instance.currentUser!.uid);
   }
@@ -80,7 +90,7 @@ class _PostCardState extends State<PostCard> {
                     Row(
                       children: [
                         Text(
-                          "${date}  •   ",
+                          "$date  •   ",
                           style: const TextStyle(
                               color: Color(0xff777777),
                               fontSize: 10,
@@ -114,7 +124,7 @@ class _PostCardState extends State<PostCard> {
             )),
         const SizedBox(height: 10),
         widget.enableMedia
-            ? Container(
+            ? SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 200,
                 child: SingleChildScrollView(
@@ -134,11 +144,19 @@ class _PostCardState extends State<PostCard> {
                                 );
                               }).toList()
                             : widget.post.imageUrls.map((image) {
-                                return Image.network(
-                                  image,
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.cover,
-                                );
+                                return GestureDetector(
+                                    onTap: () =>
+                                        _showImagePreview(context, image),
+                                    child: CachedNetworkImage(
+                                      imageUrl: image,
+                                      fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width,
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) =>
+                                              const Loader(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ));
                               }).toList()
                         //     : ,
                         )))

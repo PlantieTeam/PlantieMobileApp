@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
+import 'package:plantie/models/diagnosis.dart';
 import 'package:plantie/models/disease.dart';
+import 'package:plantie/services/firestore_services.dart';
 import 'package:plantie/shared/custome_button.dart';
+import 'package:plantie/shared/loader.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 enum Langauge { english, arabic }
 
@@ -22,7 +25,7 @@ class CameraResult extends StatefulWidget {
 class _CameraResultState extends State<CameraResult> {
   bool predicted = true;
   String detectedPlant = '';
-  Uint8List _preprocessedImageBytes= Uint8List(80);
+  Uint8List _preprocessedImageBytes = Uint8List(80);
   // ignore: non_constant_identifier_names
 
   int index = 0;
@@ -73,6 +76,11 @@ class _CameraResultState extends State<CameraResult> {
       int maxIndex = probabilities.indexOf(maxProbability);
       setState(() {
         index = maxIndex > dbDiseasesEN.length ? 1 : maxIndex;
+        addDiagnosis(Diagnosis(
+                dateTime: DateTime.now(),
+                prediction: dbDiseasesEN[index].name,
+                uid: FirebaseAuth.instance.currentUser!.uid))
+            .then((v) {});
       });
     }).catchError((err) {});
   }
@@ -160,72 +168,70 @@ class _CameraResultState extends State<CameraResult> {
               e.name.startsWith(dbDiseasesEN[index].name.split(" ")[0]) &&
               e.name != dbDiseasesEN[index].name);
       return Scaffold(
-          appBar: AppBar(),
-          body: _preprocessedImageBytes.isNotEmpty
-              ? Center(
-                  child: Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            lang == Langauge.arabic
-                                ? dbDiseasesAR[index].name
-                                : dbDiseasesEN[index].name,
-                            style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff47B88A)),
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                          SizedBox(
+        appBar: AppBar(),
+        body: _preprocessedImageBytes.isNotEmpty
+            ? Center(
+                child: Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          lang == Langauge.arabic
+                              ? dbDiseasesAR[index].name
+                              : dbDiseasesEN[index].name,
+                          style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff47B88A)),
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: lang == Langauge.arabic
+                              ? const Text(
+                                  "اشهر امراض النبات",
+                                  textDirection: TextDirection.rtl,
+                                )
+                              : const Text("Plant's Popular Diseases"),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
                             width: MediaQuery.of(context).size.width * 0.95,
-                            child: lang == Langauge.arabic
-                                ? const Text(
-                                    "اشهر امراض النبات",
-                                    textDirection: TextDirection.rtl,
-                                  )
-                                : const Text("Plant's Popular Diseases"),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.95,
-                              height: 160,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: lst
-                                    .map((e) => Container(
-                                        width: 200,
-                                        margin:
-                                            const EdgeInsets.only(right: 10),
-                                        decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/test.png"),
-                                                fit: BoxFit.cover)),
-                                        child: Center(
-                                            child: Text(
-                                          e.name.toString(),
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16),
-                                        ))))
-                                    .toList(),
-                              ))
-                        ],
-                      )))
-              : const Center(
-                  child: CircularProgressIndicator(),
-                ));
+                            height: 160,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: lst
+                                  .map((e) => Container(
+                                      width: 200,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15)),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/test.png"),
+                                              fit: BoxFit.cover)),
+                                      child: Center(
+                                          child: Text(
+                                        e.name.toString(),
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
+                                      ))))
+                                  .toList(),
+                            ))
+                      ],
+                    )))
+            : const Loader(),
+      );
     } else {
       return Scaffold(
         appBar: AppBar(),
@@ -262,11 +268,13 @@ class _CameraResultState extends State<CameraResult> {
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(right: 20),
-                                child: Image.asset('assets/images/test.png'),
+                                child:
+                                    Image.asset(dbDiseasesEN[index].image[0]),
                               ),
                               Container(
                                 margin: const EdgeInsets.only(right: 20),
-                                child: Image.asset('assets/images/test.png'),
+                                child:
+                                    Image.asset(dbDiseasesAR[index].image[1]),
                               ),
                             ],
                           ),

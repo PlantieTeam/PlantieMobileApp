@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:plantie/bloc/post_bloc.dart';
 import 'package:plantie/pages/comment_page.dart';
+import 'package:plantie/shared/loader.dart';
 import 'package:plantie/shared/post_card.dart';
 
 class CommunityPage extends StatefulWidget {
@@ -70,14 +70,13 @@ class _MyWidgetState extends State<CommunityPage> {
                 bloc: BlocProvider.of<PostBloc>(context),
                 builder: (context, state) {
                   if (state is PostLoaded) {
-                    print(state.posts.length);
                     return RefreshIndicator(
                         triggerMode: RefreshIndicatorTriggerMode.anywhere,
                         onRefresh: () async {
                           setState(() {
                             isLoading = true;
                           });
-                          Future.delayed(Duration(seconds: 2), () {
+                          Future.delayed(const Duration(seconds: 2), () {
                             setState(() {
                               isLoading = false;
                             });
@@ -89,29 +88,33 @@ class _MyWidgetState extends State<CommunityPage> {
                             itemCount: state.posts.length + 1,
                             itemBuilder: (context, index) {
                               if (index == state.posts.length) {
-                                return Center(
-                                    child: TextButton.icon(
-                                        onPressed: () {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          Future.delayed(Duration(seconds: 2),
-                                              () {
-                                            setState(() {
-                                              isLoading = false;
-                                            });
-                                          });
-                                          BlocProvider.of<PostBloc>(context)
-                                              .add(GetPosts(
-                                                  limit:
-                                                      state.posts.length + 5));
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          backgroundColor: Color(0xff47B88A),
-                                        ),
-                                        icon: const Icon(Icons.post_add),
-                                        label: Text("Load More")));
+                                return state.posts.length % 5 == 0
+                                    ? Center(
+                                        child: TextButton.icon(
+                                            onPressed: () {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+                                              Future.delayed(
+                                                  const Duration(seconds: 2), () {
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+                                              });
+                                              BlocProvider.of<PostBloc>(context)
+                                                  .add(GetPosts(
+                                                      limit:
+                                                          state.posts.length +
+                                                              5));
+                                            },
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.white,
+                                              backgroundColor:
+                                                  const Color(0xff47B88A),
+                                            ),
+                                            icon: const Icon(Icons.post_add),
+                                            label: const Text("Load More")))
+                                    : const SizedBox();
                               }
                               return PostCard(
                                   post: state.posts[index],
@@ -128,11 +131,7 @@ class _MyWidgetState extends State<CommunityPage> {
                                   });
                             }));
                   }
-                  return const Center(
-                      child: SpinKitFadingFour(
-                    color: Color(0xff47B88A),
-                    size: 40,
-                  ));
+                  return const Loader();
                 }),
           ))
         ],

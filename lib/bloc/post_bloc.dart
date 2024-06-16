@@ -60,7 +60,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           id: "",
           body: event.body,
           owner: PostUser(
-              name: auth!.displayName!,
+              id: auth!.uid,
+              name: auth.displayName!,
               email: auth.email!,
               imageUrl: auth.photoURL!),
           imageUrls: imageUrls,

@@ -4,19 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:plantie/models/Post.dart';
+import 'package:plantie/models/diagnosis.dart';
 
-fit(list) {
+fit(list) async {
   List<Post> posts = [];
   for (var doc in list) {
     List<PostComment> comments = [];
-    doc['comments'].forEach((element) {
+    for (var element in doc['comments']) {
+      var user = await getUser(element['owner']);
       comments.add(PostComment(
-          body: element['body'],
-          owner: PostUser(
-              name: element["owner"]["name"],
-              email: element["owner"]["email"],
-              imageUrl: element["owner"]["imageUrl"])));
-    });
+        body: element['body'],
+        owner: user,
+      ));
+    }
     List<String> imageUrls = [];
     doc['imageUrls'].forEach((element) {
       imageUrls.add(element);
@@ -27,10 +27,7 @@ fit(list) {
     });
     posts.add(Post(
       id: doc.id,
-      owner: PostUser(
-          name: doc['owner']['name'],
-          imageUrl: doc['owner']['imageUrl'],
-          email: doc['owner']['email']),
+      owner: await getUser(doc['owner']),
       type: doc['type'],
       body: doc['body'],
       comments: comments,
@@ -42,6 +39,27 @@ fit(list) {
   return posts;
 }
 
+Future<PostUser> getUser(String uid) async {
+  final doc = await FirebaseFirestore.instance
+      .collection('User')
+      .where('id', isEqualTo: uid)
+      .get();
+  return PostUser(
+      id: doc.docs[0]['id'],
+      name: doc.docs[0]['name'],
+      email: doc.docs[0]['email'],
+      imageUrl: doc.docs[0]['imageUrl']);
+}
+
+Future<void> addUser(PostUser user) async {
+  var doc = await FirebaseFirestore.instance.collection("User");
+  var isUser = await doc.where('id', isEqualTo: user.id).get();
+
+  if (isUser.docs.isEmpty) {
+    await doc.add(user.toJson());
+  }
+}
+
 Future<List<Post>> getPosts(int limit) async {
   final collection = FirebaseFirestore.instance
       .collection('Post')
@@ -50,14 +68,13 @@ Future<List<Post>> getPosts(int limit) async {
   var querySnapshot = await collection.get();
   List<Post> posts = [];
 
-  posts = fit(querySnapshot.docs);
+  posts = await fit(querySnapshot.docs);
   print(posts.length);
   return posts;
 }
 
 Future<List<String>> uploadFiles(List<File> f) async {
   final storage = FirebaseStorage.instance;
-  // storageRef.putFile(f[0]);
   List<String> urls = [];
   for (int i = 0; i < f.length; i++) {
     try {
@@ -101,4 +118,34 @@ Future<List<Post>> updatePost(String id, Post post) async {
   await doc.update(post.toJson());
   var posts = await getPosts(5);
   return posts;
+}
+
+Future<void> updateUserInfo(String email, String name) async {
+  final collection = await FirebaseFirestore.instance.collection('User');
+
+  var doc = await collection.where("email", isEqualTo: email).get();
+  doc.docs.forEach((doc) async {
+    await doc.reference.update({"name": name});
+  });
+}
+
+Future<void> addDiagnosis(Diagnosis diagnosis) async {
+  final collection = FirebaseFirestore.instance.collection('Diagnosis');
+  await collection.add(diagnosis.toJson());
+}
+
+Future<List<Diagnosis>> getDiagnosis() async {
+  final collection = FirebaseFirestore.instance
+      .collection('Diagnosis')
+      .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
+  var querySnapshot = await collection.get();
+  List<Diagnosis> diagnosis = [];
+  querySnapshot.docs.forEach((element) {
+    diagnosis.add(Diagnosis(
+      uid: element['uid'],
+      prediction: element['prediction'],
+      dateTime: element['dateTime'].toDate(),
+    ));
+  });
+  return diagnosis;
 }

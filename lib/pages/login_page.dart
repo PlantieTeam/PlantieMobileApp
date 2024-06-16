@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/shared/custome_button.dart';
+import 'package:plantie/shared/loader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -218,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       if (state is Loading) {
         return const Center(
-          child: CircularProgressIndicator(),
+          child: Loader(),
         );
       }
       return Center(

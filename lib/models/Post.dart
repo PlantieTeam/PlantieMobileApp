@@ -4,16 +4,22 @@ class PostUser {
   final String name;
   final String email;
   final String imageUrl;
+  final String id;
   Map<String, dynamic> toJson() {
-    return {'name': name, 'email': email, 'imageUrl': imageUrl};
+    return {'id': id, 'name': name, 'email': email, 'imageUrl': imageUrl};
   }
 
-  PostUser({required this.name, required this.email, required this.imageUrl});
+  PostUser(
+      {required this.name,
+      required this.email,
+      required this.imageUrl,
+      required this.id});
 
   copyWith({
     String? name,
   }) {
-    return PostUser(name: name ?? this.name, email: email, imageUrl: imageUrl);
+    return PostUser(
+        name: name ?? this.name, email: email, imageUrl: imageUrl, id: id);
   }
 }
 
@@ -23,7 +29,7 @@ class PostComment extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'body': body,
-      'owner': owner.toJson(),
+      'owner': owner.id,
     };
   }
 
@@ -50,7 +56,7 @@ class Post extends Equatable {
     return {
       'id': id,
       'body': body,
-      'owner': owner.toJson(),
+      'owner': owner.id,
       'imageUrls': imageUrls,
       'likes': likes,
       'comments': comments.map((e) => e.toJson()).toList(),
