@@ -99,8 +99,8 @@ class _MyWidgetState extends State<CustomNavBar> {
           screens = [
             HomePage(weatherData: weatherData),
             const CommunityPage(),
-            const ProfilePage(),
             const DiagnosisPage(),
+            const ProfilePage(),
           ];
         });
       });

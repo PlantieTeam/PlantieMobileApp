@@ -21,9 +21,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
         body: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is Unauthenticated) {
-        return Wrap(
+        return SafeArea(child: Wrap(
           alignment: WrapAlignment.center,
           runSpacing: 20,
           children: [
@@ -215,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ],
-        );
+        ));
       }
       if (state is Loading) {
         return const Center(
