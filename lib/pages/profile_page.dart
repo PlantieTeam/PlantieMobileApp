@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -8,7 +9,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<ProfilePage> {
-  String _selectedLanguage = 'English';
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -17,7 +17,7 @@ class _MyWidgetState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
-            height: 40.0,
+            height: 100.0,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +32,7 @@ class _MyWidgetState extends State<ProfilePage> {
                       color: Colors.black87.withOpacity(0.4),
                       spreadRadius: 0.1,
                       blurRadius: 20,
-                      offset: const Offset(0, 0),
+                      offset: Offset(0, 0),
                     ),
                   ],
                 ),
@@ -48,66 +48,44 @@ class _MyWidgetState extends State<ProfilePage> {
           const SizedBox(
             height: 80.0,
           ),
-          const Text(
-            'Select Language',
-            style: TextStyle(fontSize: 16.0),
-          ),
-          DropdownButton<String>(
-            value: _selectedLanguage,
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedLanguage = newValue!;
-              });
-            },
-            items: <String>['English', 'Arabic']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          const SizedBox(
-            height: 30.0,
-          ),
-          const Text(
+          Text(
             'Name',
             style: TextStyle(fontSize: 16.0),
           ),
           Container(
-            height: 35.0,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: Colors.black),
-                borderRadius: const BorderRadius.all(Radius.circular(10))),
-            child: const Padding(
-              padding: EdgeInsets.all(4.0),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
               child: Text(
                 'ahmad qasem',
                 style: TextStyle(fontSize: 15),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            'Email',
-            style: TextStyle(fontSize: 16.0),
-          ),
-          Container(
             height: 35.0,
             width: double.infinity,
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: Colors.black),
                 borderRadius: const BorderRadius.all(Radius.circular(10))),
-            child: const Padding(
-              padding: EdgeInsets.all(4.0),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Email',
+            style: const TextStyle(fontSize: 16.0),
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
               child: Text(
                 'ahmad.h.qasem@gmail.com',
                 style: TextStyle(fontSize: 15.0),
               ),
             ),
+            height: 35.0,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.black),
+                borderRadius: const BorderRadius.all(Radius.circular(10))),
           )
         ],
       ),

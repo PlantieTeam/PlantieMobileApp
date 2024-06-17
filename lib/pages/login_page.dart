@@ -148,8 +148,6 @@ class _LoginPageState extends State<LoginPage> {
                             email: email,
                             password: password,
                           ));
-                                      Navigator.pushReplacementNamed(context, '/');
-
                         }
                       }),
                   Row(
@@ -207,8 +205,6 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     BlocProvider.of<AuthBloc>(context)
                         .add(const LoggedInWithGoogle());
-                                    Navigator.pushReplacementNamed(context, '/');
-
                   },
                 ),
               ],

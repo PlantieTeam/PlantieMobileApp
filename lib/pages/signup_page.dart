@@ -248,10 +248,6 @@ class _SignupPageState extends State<SignupPage> {
                       onPressed: () {
                         BlocProvider.of<AuthBloc>(context)
                             .add(const LoggedInWithGoogle());
-                        Navigator.pushReplacementNamed(
-                          context,
-                          '/login',
-                        );
                       },
                     ),
                   ],

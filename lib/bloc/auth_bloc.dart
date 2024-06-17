@@ -38,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
     on<SignUp>((event, emit) async {
+      emit(Loading());
       UserModel result = await signUpWithEmailAndPassword(
           event.email, event.password, event.name);
       final user = FirebaseAuth.instance.currentUser;
