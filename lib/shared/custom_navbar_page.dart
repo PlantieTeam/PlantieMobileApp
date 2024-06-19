@@ -82,8 +82,6 @@ class _MyWidgetState extends State<CustomNavBar> {
       await prefs.setDouble('latitude', lat);
       await prefs.setDouble('longitude', lon);
     }
-
-    print('Current Location: Latitude $lat, Longitude $lon');
   }
 
   Future<Map<String, dynamic>> fetchWeatherData(double lat, double lon) async {
@@ -134,7 +132,7 @@ class _MyWidgetState extends State<CustomNavBar> {
   Color secondaryColor = const Color(0x7f1A6158);
   Color primaryColor = const Color(0xff47B88A);
   final User user = FirebaseAuth.instance.currentUser!;
-
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     if (_currentIndex != 3) {
@@ -189,39 +187,47 @@ class _MyWidgetState extends State<CustomNavBar> {
         bucket: bucket,
         child: screens[_currentIndex],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryColor,
-        shape: const CircleBorder(),
-        onPressed: () {
-          if (_currentIndex == 1) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const AddPostPage(),
-            ));
-          } else {
-            setState(() {
-              _currentIndex = 3;
-            });
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-              systemNavigationBarColor: Colors.black,
-            ));
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const CameraCapture()));
-          }
-        },
-        child: _currentIndex == 1
-            ? const Icon(
-                Icons.add,
+      floatingActionButtonLocation: _currentIndex == 1
+          ? FloatingActionButtonLocation.endFloat
+          : FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _currentIndex == 1
+          ? FloatingActionButton.extended(
+              label:
+                  const Text('Add Post', style: TextStyle(color: Colors.white)),
+              backgroundColor: primaryColor,
+              onPressed: () {
+                if (_currentIndex == 1) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const AddPostPage(),
+                  ));
+                }
+              },
+              icon: const Icon(
+                Icons.edit,
                 color: Colors.white,
-              )
-            : SvgPicture.asset(
+              ))
+          : FloatingActionButton(
+              backgroundColor: primaryColor,
+              shape: const CircleBorder(),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 3;
+                });
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                  systemNavigationBarColor: Colors.black,
+                ));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CameraCapture()));
+              },
+              child: SvgPicture.asset(
                 'assets/icons/camera.svg',
                 // ignore: deprecated_member_use
                 color: Colors.white,
                 //: Colors.white,
-              ),
-      ),
+              )),
       extendBody: true,
       bottomNavigationBar: ClipPath(
         child: BottomAppBar(
