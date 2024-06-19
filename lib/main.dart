@@ -66,7 +66,7 @@ class MainApp extends StatelessWidget {
         title: 'Plantie',
         home: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           if (state is AppStarted) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: Loader());
           }
           if (state is Unauthenticated) {
             return const LandingPage();

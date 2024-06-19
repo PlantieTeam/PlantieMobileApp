@@ -7,7 +7,7 @@ class Loader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-        child: SpinKitChasingDots(
+        child: SpinKitFadingCircle(
       color: Color(0xff47B88A),
       size: 30,
     ));

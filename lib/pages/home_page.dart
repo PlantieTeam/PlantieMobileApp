@@ -33,11 +33,7 @@ class _MyWidgetState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<PlantBloc, PlantState>(builder: (context, state) {
       if (state is PlantInitial) {
-        return const Center(
-            child: SpinKitFadingFour(
-          color: Color(0xff47B88A),
-          size: 40,
-        ));
+        return const Center(child: Loader());
       }
       if (state is PlantLoaded &&
           state.plants.isNotEmpty &&
