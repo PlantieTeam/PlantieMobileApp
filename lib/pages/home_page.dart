@@ -63,26 +63,11 @@ class _MyWidgetState extends State<HomePage> {
                             .substring(0, 60),
                         timeOfRain: widget.weatherData.timeOfRain!,
                         humidity: widget.weatherData.humidity ?? 0)
-                    : Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const WeatherCard(
-                              status: "",
-                              location: "",
-                              temperature: 32,
-                              suggestion: "",
-                              timeOfRain: "",
-                              humidity: 0),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.95,
-                            height: 183,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(9),
-                              color: Color(0x66121212),
-                            ),
-                          ),
-                          Loader(),
-                        ],
+                    : const SizedBox(
+                        height: 140,
+                        child: Center(
+                          child: Loader(),
+                        ),
                       ),
                 Container(
                   width: MediaQuery.of(context).size.width * ratio,
@@ -105,7 +90,7 @@ class _MyWidgetState extends State<HomePage> {
                                 widget.weatherData.humidity! * 1.0,
                                 widget.weatherData.windSpeed!,
                                 5)
-                            : "loading...",
+                            : "Fetching the current Location...",
                         style: const TextStyle(
                             color: Color(0xff465165), fontSize: 12),
                       ),

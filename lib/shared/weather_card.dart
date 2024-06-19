@@ -40,7 +40,6 @@ class _WeatherCardState extends State<WeatherCard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     switch (widget.status) {
       case "Partly Cloudy":
         img = 'weather_partly_cloudy.svg';
@@ -62,6 +61,10 @@ class _WeatherCardState extends State<WeatherCard> {
         img = 'weather_partly_cloudy.svg';
         status = WeatherStatus.partlyCloudy;
     }
+
+    // JUST FOR TESTING
+    status = WeatherStatus.partlyCloudy;
+    img = 'weather_partly_cloudy.svg';
   }
 
   @override

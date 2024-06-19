@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:plantie/models/Post.dart';
 import 'package:plantie/shared/image_preview.dart';
 import 'package:plantie/shared/loader.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({
@@ -67,7 +68,10 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(
+        top: 10,
+      ),
+      
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
         color: Colors.white,
@@ -124,42 +128,68 @@ class _PostCardState extends State<PostCard> {
             )),
         const SizedBox(height: 10),
         widget.enableMedia
-            ? SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 200,
-                child: SingleChildScrollView(
-                    physics: const PageScrollPhysics(),
-                    controller: PageController(
-                      viewportFraction:
-                          1 - (1 / MediaQuery.of(context).size.width),
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                        children: widget.imagePreview != null
-                            ? widget.post.imageUrls.map((image) {
-                                return Image.file(
-                                  File(image),
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.cover,
-                                );
-                              }).toList()
-                            : widget.post.imageUrls.map((image) {
-                                return GestureDetector(
-                                    onTap: () =>
-                                        _showImagePreview(context, image),
-                                    child: CachedNetworkImage(
-                                      imageUrl: image,
-                                      fit: BoxFit.cover,
-                                      width: MediaQuery.of(context).size.width,
-                                      progressIndicatorBuilder:
-                                          (context, url, downloadProgress) =>
-                                              const Loader(),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
-                                    ));
-                              }).toList()
-                        //     : ,
-                        )))
+            ? FlutterCarousel(
+                options: CarouselOptions(
+                  height: 200,
+                ),
+                items: widget.imagePreview != null
+                    ? widget.post.imageUrls.map((image) {
+                        return Image.file(
+                          File(image),
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.cover,
+                        );
+                      }).toList()
+                    : widget.post.imageUrls.map((image) {
+                        return GestureDetector(
+                            onTap: () => _showImagePreview(context, image),
+                            child: CachedNetworkImage(
+                              imageUrl: image,
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                              progressIndicatorBuilder:
+                                  (context, url, progress) => const Center(
+                                child: Loader(),
+                              ),
+                            ));
+                      }).toList(),
+              )
+            // SizedBox(
+            //     width: MediaQuery.of(context).size.width,
+            //     height: 200,
+            //     child: SingleChildScrollView(
+            //         physics: const PageScrollPhysics(),
+            //         controller: PageController(
+            //           viewportFraction:
+            //               1 - (1 / MediaQuery.of(context).size.width),
+            //         ),
+            //         scrollDirection: Axis.horizontal,
+            //         child: Row(
+            //             children: widget.imagePreview != null
+            //                 ? widget.post.imageUrls.map((image) {
+            //                     return Image.file(
+            //                       File(image),
+            //                       width: MediaQuery.of(context).size.width,
+            //                       fit: BoxFit.cover,
+            //                     );
+            //                   }).toList()
+            //                 : widget.post.imageUrls.map((image) {
+            //                     return GestureDetector(
+            //                         onTap: () =>
+            //                             _showImagePreview(context, image),
+            //                         child: CachedNetworkImage(
+            //                           imageUrl: image,
+            //                           fit: BoxFit.cover,
+            //                           width: MediaQuery.of(context).size.width,
+            //                           progressIndicatorBuilder:
+            //                               (context, url, downloadProgress) =>
+            //                                   const Loader(),
+            //                           errorWidget: (context, url, error) =>
+            //                               const Icon(Icons.error),
+            //                         ));
+            //                   }).toList()
+            //             //     : ,
+            //             )))
             : Container(),
         const SizedBox(height: 10),
         Container(

@@ -40,6 +40,7 @@ class _AddPostPageState extends State<AddPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // resizeToAvoidBottomInset: false,
         appBar: AppBar(
           leading: const BackButton(),
           title: const Text("Add Post"),
@@ -79,33 +80,38 @@ class _AddPostPageState extends State<AddPostPage> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             key: _key,
             child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextFormField(
-                    minLines: 15,
-                    maxLines: 15,
-                    onChanged: (value) {
-                      _handleTextChange();
-                    },
-                    controller: _textController,
-                    textDirection: _textDirection,
-                    onSaved: (value) {
-                      _textValue = value;
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'Write something here',
-                      border: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.5,
+
+                      // height:MediaQuery.,
+                      child: TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        onChanged: (value) {
+                          _handleTextChange();
+                        },
+                        controller: _textController,
+                        textDirection: _textDirection,
+                        onSaved: (value) {
+                          _textValue = value;
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Write something here',
+                          border: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          } else {
+                            return null;
+                          }
+                        },
+                      )),
                   SizedBox(
                     height: 150,
                     // width: 300,

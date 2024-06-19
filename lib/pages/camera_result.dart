@@ -6,7 +6,7 @@ import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:plantie/models/diagnosis.dart';
 import 'package:plantie/models/disease.dart';
-import 'package:plantie/services/firestore_services.dart';
+import 'package:plantie/services/file_services.dart';
 import 'package:plantie/shared/custome_button.dart';
 import 'package:plantie/shared/loader.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -76,17 +76,18 @@ class _CameraResultState extends State<CameraResult> {
       int maxIndex = probabilities.indexOf(maxProbability);
       setState(() {
         index = maxIndex > dbDiseasesEN.length ? 1 : maxIndex;
-        addDiagnosis(Diagnosis(
-                dateTime: DateTime.now(),
+        FileStorageService.addDiagnosis(Diagnosis(
+                uid: FirebaseAuth.instance.currentUser!.uid,
                 prediction: dbDiseasesEN[index].name,
-                uid: FirebaseAuth.instance.currentUser!.uid))
-            .then((v) {});
+                dateTime: DateTime.now(),
+                path: widget.path))
+            .then((value) {});
       });
     }).catchError((err) {});
   }
 
 //  Map Part
-  Future<Position> _determinePosition() async {
+  Future<Position?> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -104,7 +105,7 @@ class _CameraResultState extends State<CameraResult> {
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getLastKnownPosition();
   }
 
   Future<void> openMap(double currentLatitude, double currentLongitude,
@@ -129,13 +130,13 @@ class _CameraResultState extends State<CameraResult> {
   Future<void> launchMapForNearest(
       List<Map<String, double>> destinations) async {
     final currentLocation = await _determinePosition();
-    final currentLatitude = currentLocation.latitude;
-    final currentLongitude = currentLocation.longitude;
+    final currentLatitude = currentLocation?.latitude;
+    final currentLongitude = currentLocation?.longitude;
 
     final distances = destinations.map((destination) {
       final destinationLatitude = destination['latitude'];
       final destinationLongitude = destination['longitude'];
-      return Geolocator.distanceBetween(currentLatitude, currentLongitude,
+      return Geolocator.distanceBetween(currentLatitude!, currentLongitude!,
           destinationLatitude!, destinationLongitude!);
     }).toList();
 
@@ -146,7 +147,7 @@ class _CameraResultState extends State<CameraResult> {
     final nearestLatitude = nearestDestination['latitude'];
     final nearestLongitude = nearestDestination['longitude'];
     await openMap(
-        currentLatitude, currentLongitude, nearestLatitude, nearestLongitude);
+        currentLatitude!, currentLongitude!, nearestLatitude, nearestLongitude);
   }
 
   @override

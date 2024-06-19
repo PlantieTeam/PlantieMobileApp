@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
 import 'package:plantie/shared/custom_listView.dart';
 import 'package:plantie/shared/custome_button.dart';
+import 'package:plantie/shared/loader.dart';
 
 enum Fertilizer { urea, mOP, sSP, dAP }
 
@@ -61,9 +62,16 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
     });
   }
 
+  List<String> trees = [
+    'Apple',
+    "Olives",
+    "Grapes",
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.black),
           foregroundColor: Colors.black,
@@ -79,7 +87,7 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
         ),
         body: BlocBuilder<PlantBloc, PlantState>(builder: (context, state) {
           if (state is PlantInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: Loader());
           }
           if (state is PlantLoaded) {
             return SingleChildScrollView(
@@ -92,7 +100,6 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                     children: [
                       Container(
                           width: MediaQuery.of(context).size.width * 0.95,
-                          // height: 100,
                           margin: const EdgeInsets.only(top: 20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,198 +155,215 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text("Unit",
-                                  style: TextStyle(
+                              Text(
+                                  "Unit ${trees.contains(state.plants[state.selectedPlant].name)}",
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                   )),
-                              Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.95,
-                                  margin: const EdgeInsets.only(
-                                      top: 20, bottom: 20),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(color: Colors.black12),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    // crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          flex: 1,
-                                          child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  unit = Unit.Acre;
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  // border:
-                                                  //     Border.all(color: Colors.grey),
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  5),
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  5)),
-                                                  color: unit == Unit.Acre
-                                                      ? Colors.grey[200]
-                                                      : Colors.white60,
-                                                ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    "Acres",
-                                                  ),
-                                                ),
-                                              ))),
-                                      Container(
-                                        width: 1,
-                                        height: 50,
-                                        color: Colors.black12,
+                              !trees.contains(
+                                      state.plants[state.selectedPlant].name)
+                                  ? Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.95,
+                                      margin: const EdgeInsets.only(
+                                          top: 20, bottom: 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border:
+                                            Border.all(color: Colors.black12),
                                       ),
-                                      Expanded(
-                                          flex: 1,
-                                          child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  unit = Unit.Hectare;
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: unit == Unit.Hectare
-                                                      ? Colors.grey[200]
-                                                      : Colors.white60,
-                                                ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    "Hectare",
-                                                  ),
-                                                ),
-                                              ))),
-                                      Container(
-                                        width: 1,
-                                        height: 50,
-                                        color: Colors.black12,
-                                      ),
-                                      Expanded(
-                                          flex: 1,
-                                          child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  unit = Unit.SquareMeter;
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  5),
-                                                          bottomRight:
-                                                              Radius.circular(
-                                                                  5)),
-                                                  color:
-                                                      unit == Unit.SquareMeter
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Expanded(
+                                              flex: 1,
+                                              child: InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      unit = Unit.Acre;
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                              topLeft: Radius
+                                                                  .circular(5),
+                                                              bottomLeft: Radius
+                                                                  .circular(5)),
+                                                      color: unit == Unit.Acre
                                                           ? Colors.grey[200]
                                                           : Colors.white60,
-                                                ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    "Square Meters",
-                                                  ),
-                                                ),
-                                              ))),
-                                    ],
-                                  )),
+                                                    ),
+                                                    child: const Center(
+                                                      child: Text(
+                                                        "Acres",
+                                                      ),
+                                                    ),
+                                                  ))),
+                                          Container(
+                                            width: 1,
+                                            height: 50,
+                                            color: Colors.black12,
+                                          ),
+                                          Expanded(
+                                              flex: 1,
+                                              child: InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      unit = Unit.Hectare;
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          unit == Unit.Hectare
+                                                              ? Colors.grey[200]
+                                                              : Colors.white60,
+                                                    ),
+                                                    child: const Center(
+                                                      child: Text(
+                                                        "Hectare",
+                                                      ),
+                                                    ),
+                                                  ))),
+                                          Container(
+                                            width: 1,
+                                            height: 50,
+                                            color: Colors.black12,
+                                          ),
+                                          Expanded(
+                                              flex: 1,
+                                              child: InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      unit = Unit.SquareMeter;
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                              topRight: Radius
+                                                                  .circular(5),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                      color: unit ==
+                                                              Unit.SquareMeter
+                                                          ? Colors.grey[200]
+                                                          : Colors.white60,
+                                                    ),
+                                                    child: const Center(
+                                                      child: Text(
+                                                        "Square Meters",
+                                                      ),
+                                                    ),
+                                                  ))),
+                                        ],
+                                      ))
+                                  : const Text("Number of Tree"),
                               Card(
+                                  elevation: 3,
+                                  color: Colors.white,
                                   child: Container(
-                                padding: const EdgeInsets.all(10),
-                                height: 200,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                    padding: const EdgeInsets.all(10),
+                                    height: 200,
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: [
-                                        FilledButton(
-                                            style: FilledButton.styleFrom(
-                                              minimumSize: const Size(50, 50),
-                                              shape: const CircleBorder(),
-                                              backgroundColor: Colors.grey[200],
-                                              foregroundColor: Colors.black54,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            FilledButton(
+                                                style: FilledButton.styleFrom(
+                                                  minimumSize:
+                                                      const Size(50, 50),
+                                                  shape: const CircleBorder(),
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          255, 230, 230, 230),
+                                                  foregroundColor:
+                                                      Colors.black54,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    if (area > 0) {
+                                                      area--;
+                                                    }
+                                                    areaController.text =
+                                                        area.toString();
+                                                  });
+                                                },
+                                                child:
+                                                    const Icon(Icons.remove)),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey[200],
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              width: 100,
+                                              child: TextField(
+                                                controller: areaController,
+                                                textAlign: TextAlign.center,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    area = int.parse(value);
+                                                  });
+                                                  areaController.text = value;
+                                                },
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                ),
+                                              ),
                                             ),
-                                            onPressed: () {
-                                              setState(() {
-                                                if (area > 0) {
-                                                  area--;
-                                                }
-                                                areaController.text =
-                                                    area.toString();
-                                              });
-                                            },
-                                            child: const Icon(Icons.remove)),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                          width: 100,
-                                          child: TextField(
-                                            controller: areaController,
-                                            textAlign: TextAlign.center,
-                                            keyboardType: TextInputType.number,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                area = int.parse(value);
-                                              });
-                                              areaController.text = value;
-                                            },
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                            ),
-                                          ),
+                                            FilledButton(
+                                                style: FilledButton.styleFrom(
+                                                  minimumSize:
+                                                      const Size(50, 50),
+                                                  shape: const CircleBorder(),
+                                                  backgroundColor:
+                                                      Colors.grey[200],
+                                                  foregroundColor:
+                                                      Colors.black54,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    area++;
+                                                  });
+                                                  areaController.text =
+                                                      area.toString();
+                                                },
+                                                child: const Icon(Icons.add)),
+                                          ],
                                         ),
-                                        FilledButton(
-                                            style: FilledButton.styleFrom(
-                                              minimumSize: const Size(50, 50),
-                                              shape: const CircleBorder(),
-                                              backgroundColor: Colors.grey[200],
-                                              foregroundColor: Colors.black54,
-                                            ),
+                                        Button(
+                                            text: "Calculate",
                                             onPressed: () {
-                                              setState(() {
-                                                area++;
-                                              });
-                                              areaController.text =
-                                                  area.toString();
-                                            },
-                                            child: const Icon(Icons.add)),
+                                              calculate(state
+                                                  .plants[state.selectedPlant]
+                                                  .npk);
+                                            })
                                       ],
                                     ),
-                                    Button(
-                                        text: "Calculate",
-                                        onPressed: () {
-                                          calculate(state
-                                              .plants[state.selectedPlant].npk);
-                                        })
-                                  ],
-                                ),
-                              )),
+                                  )),
                               SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.95,
@@ -348,6 +372,8 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                     scrollDirection: Axis.horizontal,
                                     children: [
                                       Card(
+                                        elevation: 3,
+                                        color: Colors.white,
                                         child: SizedBox(
                                           height: 150,
                                           width: MediaQuery.of(context)
@@ -404,6 +430,8 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                         ),
                                       ),
                                       Card(
+                                        elevation: 3,
+                                        color: Colors.white,
                                         child: SizedBox(
                                           height: 150,
                                           width: MediaQuery.of(context)
@@ -460,6 +488,8 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                         ),
                                       ),
                                       Card(
+                                        elevation: 3,
+                                        color: Colors.white,
                                         child: SizedBox(
                                           height: 150,
                                           width: MediaQuery.of(context)
@@ -514,6 +544,9 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                     ],
                                   ))
                             ]),
+                      ),
+                      const SizedBox(
+                        height: 20,
                       )
                     ],
                   ),

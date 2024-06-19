@@ -145,6 +145,7 @@ Future<List<Diagnosis>> getDiagnosis() async {
       uid: element['uid'],
       prediction: element['prediction'],
       dateTime: element['dateTime'].toDate(),
+      path: element['path'],
     ));
   });
   return diagnosis;

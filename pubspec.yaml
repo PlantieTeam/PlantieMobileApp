@@ -37,6 +37,7 @@ dependencies:
   cached_network_image: ^3.3.1
   shared_preferences: ^2.2.3
   photo_view: ^0.15.0
+  flutter_carousel_widget: ^2.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

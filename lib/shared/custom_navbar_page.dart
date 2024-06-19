@@ -15,6 +15,7 @@ import 'package:plantie/pages/home_page.dart';
 import 'package:plantie/pages/profile_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({super.key});
@@ -26,55 +27,9 @@ class CustomNavBar extends StatefulWidget {
 class _MyWidgetState extends State<CustomNavBar> {
   int _currentIndex = 0;
   Weather weatherData = Weather();
-
-  Future<Map<String, dynamic>> fetchWeatherData(double lat, double lon) async {
-    const String apiKey =
-        '05d0f5b73d3d8032629902e2cbb33870'; // Replace with your actual key
-    final String url =
-        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&units=imperial&exclude=minutely&appid=$apiKey';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      // Parse the JSON response
-      return jsonDecode(response.body) as Map<String, dynamic>;
-    } else {
-      // Handle error
-      throw Exception('Failed to fetch weather data');
-    }
-  }
-
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return await Geolocator.getCurrentPosition();
-  }
-
-  final PageStorageBucket bucket = PageStorageBucket();
-
-  List<Widget> screens = [];
-  Color secondaryColor = const Color(0x7f1A6158);
-  Color primaryColor = const Color(0xff47B88A);
-  final User user = FirebaseAuth.instance.currentUser!;
   @override
   void initState() {
     super.initState();
-    // Fetch weather data or perform any other initialization tasks here
     setState(() {
       screens = [
         HomePage(weatherData: weatherData),
@@ -83,9 +38,75 @@ class _MyWidgetState extends State<CustomNavBar> {
         const ProfilePage(),
       ];
     });
+    initialize();
+  }
 
-    _determinePosition().then((value) {
-      fetchWeatherData(value.latitude, value.longitude).then((val) {
+  Future<void> initialize() async {
+    await getCurrentLocation();
+    await fetchWeatherAndUpdateUI();
+  }
+
+  Future<void> getCurrentLocation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Check if cached location is available
+    double? lat = prefs.getDouble('latitude');
+    double? lon = prefs.getDouble('longitude');
+
+    if (lat == null || lon == null) {
+      // Get current location
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Location services are disabled.');
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied.');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception(
+            'Location permissions are permanently denied, we cannot request permissions.');
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      lat = position.latitude;
+      lon = position.longitude;
+
+      // Save location to SharedPreferences
+      await prefs.setDouble('latitude', lat);
+      await prefs.setDouble('longitude', lon);
+    }
+
+    print('Current Location: Latitude $lat, Longitude $lon');
+  }
+
+  Future<Map<String, dynamic>> fetchWeatherData(double lat, double lon) async {
+    const String apiKey = '05d0f5b73d3d8032629902e2cbb33870';
+    final String url =
+        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&units=imperial&exclude=minutely&appid=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('Failed to fetch weather data');
+    }
+  }
+
+  Future<void> fetchWeatherAndUpdateUI() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double? lat = prefs.getDouble('latitude');
+    double? lon = prefs.getDouble('longitude');
+
+    if (lat != null && lon != null) {
+      fetchWeatherData(lat, lon).then((val) {
         setState(() {
           weatherData = Weather(
             temperature: val['current']['temp'],
@@ -104,8 +125,15 @@ class _MyWidgetState extends State<CustomNavBar> {
           ];
         });
       });
-    });
+    }
   }
+
+  final PageStorageBucket bucket = PageStorageBucket();
+
+  List<Widget> screens = [];
+  Color secondaryColor = const Color(0x7f1A6158);
+  Color primaryColor = const Color(0xff47B88A);
+  final User user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +145,7 @@ class _MyWidgetState extends State<CustomNavBar> {
     }
     return SafeArea(
         child: Scaffold(
+      backgroundColor: Colors.white,
       // drawer: const Drawer(),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
@@ -262,7 +291,7 @@ class _MyWidgetState extends State<CustomNavBar> {
                   MaterialButton(
                     onPressed: () {
                       setState(() {
-                        _currentIndex = 3;
+                        _currentIndex = 2;
                       });
                     },
                     child: Column(
@@ -271,13 +300,13 @@ class _MyWidgetState extends State<CustomNavBar> {
                         SvgPicture.asset(
                           'assets/icons/camera_small.svg', // ignore: deprecated_member_use
                           // ignore: deprecated_member_use
-                          color: _currentIndex == 3
+                          color: _currentIndex == 2
                               ? primaryColor
                               : secondaryColor,
                         ),
                         Text('Diagnosis',
                             style: TextStyle(
-                                color: _currentIndex == 3
+                                color: _currentIndex == 2
                                     ? primaryColor
                                     : secondaryColor,
                                 fontSize: 12.0,
@@ -288,7 +317,7 @@ class _MyWidgetState extends State<CustomNavBar> {
                   MaterialButton(
                     onPressed: () {
                       setState(() {
-                        _currentIndex = 2;
+                        _currentIndex = 3;
                       });
                     },
                     child: Column(
@@ -297,13 +326,13 @@ class _MyWidgetState extends State<CustomNavBar> {
                         SvgPicture.asset(
                           'assets/icons/profile.svg',
                           // ignore: deprecated_member_use
-                          color: _currentIndex == 2
+                          color: _currentIndex == 3
                               ? primaryColor
                               : secondaryColor,
                         ),
                         Text('Profile',
                             style: TextStyle(
-                                color: _currentIndex == 2
+                                color: _currentIndex == 3
                                     ? primaryColor
                                     : secondaryColor,
                                 fontSize: 12.0,
