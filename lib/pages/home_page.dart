@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
+import 'package:plantie/models/weather.dart';
 import 'package:plantie/pages/fertilizer_calculator_page.dart';
+import 'package:plantie/services/weather_prediction.dart';
 import 'package:plantie/shared/custom_listView.dart';
 import 'package:plantie/shared/custome_button.dart';
+import 'package:plantie/shared/loader.dart';
 import 'package:plantie/shared/weather_card.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.weatherData});
+  final Weather weatherData;
 
   @override
   State<HomePage> createState() => _MyWidgetState();
@@ -15,11 +19,19 @@ class HomePage extends StatefulWidget {
 
 class _MyWidgetState extends State<HomePage> {
   double ratio = 0.95;
+  double temp = 0.0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PlantBloc, PlantState>(builder: (context, state) {
       if (state is PlantInitial) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: Loader());
       }
       if (state is PlantLoaded &&
           state.plants.isNotEmpty &&
@@ -31,30 +43,50 @@ class _MyWidgetState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const WeatherCard(
-                    status: WeatherStatus.sunny,
-                    location: "Palestine Jenin",
-                    temperature: 30,
-                    suggestion: "Good for applying the fertilizers",
-                    timeOfRain: "10:00 AM",
-                    humidity: "50"),
+                widget.weatherData.temperature != null
+                    ? WeatherCard(
+                        status: widget.weatherData.status!,
+                        location: widget.weatherData.location!,
+                        temperature: widget.weatherData.temperature!,
+                        suggestion: checkWeatherConditionsEnglish(
+                                widget.weatherData.status!,
+                                widget.weatherData.temperature!,
+                                widget.weatherData.humidity! * 1.0,
+                                widget.weatherData.windSpeed!,
+                                5)
+                            .substring(0, 60),
+                        timeOfRain: widget.weatherData.timeOfRain!,
+                        humidity: widget.weatherData.humidity ?? 0)
+                    : const SizedBox(
+                        height: 140,
+                        child: Center(
+                          child: Loader(),
+                        ),
+                      ),
                 Container(
                   width: MediaQuery.of(context).size.width * ratio,
-                  height: 75,
+                  height: 120,
                   margin: const EdgeInsets.only(top: 20),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
+                      const Text(
                         "Weather",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        "Weather Today is good for applying the fertilizers",
-                        style:
-                            TextStyle(color: Color(0xff465165), fontSize: 12),
+                        widget.weatherData.temperature != null
+                            ? checkWeatherConditionsEnglish(
+                                widget.weatherData.status!,
+                                widget.weatherData.temperature!,
+                                widget.weatherData.humidity! * 1.0,
+                                widget.weatherData.windSpeed!,
+                                5)
+                            : "Fetching the current Location...",
+                        style: const TextStyle(
+                            color: Color(0xff465165), fontSize: 12),
                       ),
                     ],
                   ),
@@ -122,7 +154,7 @@ class _MyWidgetState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  "Growing season",
+                                  "About Plant",
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold),
@@ -140,20 +172,6 @@ class _MyWidgetState extends State<HomePage> {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                const Text(
-                                  "Water Need",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                const Text("1 inch of water per week",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xff465165))),
-                                const SizedBox(height: 20),
                                 Button(text: "Read more", onPressed: () {})
                               ]),
                         )

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/pages/login_page.dart';
 import 'package:plantie/shared/custome_button.dart';
+import 'package:plantie/shared/loader.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -248,6 +249,10 @@ class _SignupPageState extends State<SignupPage> {
                       onPressed: () {
                         BlocProvider.of<AuthBloc>(context)
                             .add(const LoggedInWithGoogle());
+                        Navigator.pushReplacementNamed(
+                          context,
+                          '/login',
+                        );
                       },
                     ),
                   ],
@@ -258,7 +263,7 @@ class _SignupPageState extends State<SignupPage> {
 
           if (state is Loading) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Loader(),
             );
           }
           return const Center(
