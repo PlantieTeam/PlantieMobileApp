@@ -43,6 +43,10 @@ class _MyWidgetState extends State<CommunityPage> {
                 children: [
                   Expanded(
                       child: TextField(
+                    onSubmitted: (value) {
+                      BlocProvider.of<PostBloc>(context)
+                          .add(Search(text: value));
+                    },
                     decoration: InputDecoration(
                       hintText: 'Search',
                       prefixIcon: const Icon(Icons.search),
@@ -89,11 +93,10 @@ class _MyWidgetState extends State<CommunityPage> {
                             });
                           });
                           BlocProvider.of<PostBloc>(context)
-                              .add(GetPosts(limit: state.posts.length + 5));
+                              .add(const GetPosts());
                         },
-                        child: Container(
+                        child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.98,
-      
                             child: ListView.builder(
                                 itemCount: state.posts.length + 1,
                                 itemBuilder: (context, index) {
@@ -114,7 +117,7 @@ class _MyWidgetState extends State<CommunityPage> {
                                                   });
                                                   BlocProvider.of<PostBloc>(
                                                           context)
-                                                      .add(GetPosts(
+                                                      .add(GetMorePosts(
                                                           limit: state.posts
                                                                   .length +
                                                               5));

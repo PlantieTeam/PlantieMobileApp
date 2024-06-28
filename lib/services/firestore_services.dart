@@ -52,7 +52,7 @@ Future<PostUser> getUser(String uid) async {
 }
 
 Future<void> addUser(PostUser user) async {
-  var doc = await FirebaseFirestore.instance.collection("User");
+  var doc = FirebaseFirestore.instance.collection("User");
   var isUser = await doc.where('id', isEqualTo: user.id).get();
 
   if (isUser.docs.isEmpty) {
@@ -63,13 +63,30 @@ Future<void> addUser(PostUser user) async {
 Future<List<Post>> getPosts(int limit) async {
   final collection = FirebaseFirestore.instance
       .collection('Post')
-      // .orderBy("uploadDate", descending: true)
+      .orderBy("uploadDate", descending: true)
       .limit(limit);
   var querySnapshot = await collection.get();
   List<Post> posts = [];
 
   posts = await fit(querySnapshot.docs);
-  print(posts.length);
+  return posts;
+}
+
+Future<List<Post>> search(String text) async {
+  if (text == "") {
+    return await getPosts(5);
+  }
+  final collection = await FirebaseFirestore.instance.collection('Post').get();
+  var querySnapshot = await collection.docs.where((e) {
+    return e['body']
+            .toString()
+            .toLowerCase()
+            .contains(text.toLowerCase().trim()) ||
+        e['type'].toString().toLowerCase().contains(text.toLowerCase().trim());
+  });
+  List<Post> posts = [];
+  posts = await fit(querySnapshot);
+  print(text);
   return posts;
 }
 
@@ -121,9 +138,10 @@ Future<List<Post>> updatePost(String id, Post post) async {
 }
 
 Future<void> updateUserInfo(String email, String name) async {
-  final collection = await FirebaseFirestore.instance.collection('User');
+  final collection = FirebaseFirestore.instance.collection('User');
 
   var doc = await collection.where("email", isEqualTo: email).get();
+  // ignore: avoid_function_literals_in_foreach_calls
   doc.docs.forEach((doc) async {
     await doc.reference.update({"name": name});
   });

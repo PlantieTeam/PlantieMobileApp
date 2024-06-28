@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/services/firestore_services.dart';
 import 'package:plantie/shared/custome_button.dart';
 
@@ -133,6 +135,22 @@ class _MyWidgetState extends State<ProfilePage> {
                     FirebaseAuth.instance.currentUser!
                         .updateDisplayName(_nameController.text);
                   },
+                ),
+              ),
+              const SizedBox(height: 30.0),
+              Center(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      minimumSize:
+                          Size(MediaQuery.of(context).size.width * 0.8, 50),
+                      foregroundColor: Colors.redAccent,
+                      side: const BorderSide(
+                        color: Colors.redAccent,
+                      )),
+                  onPressed: () {
+                    BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+                  },
+                  child: const Text('Logout'),
                 ),
               )
             ],

@@ -14,8 +14,21 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<GetPosts>((event, emit) async {
       // emit(PostInitial());
       // TODO: implement event handler
-      var posts = await getPosts(event.limit);
+      emit(PostLoaded(posts: []));
+      emit(PostInitial());
+      var posts = await getPosts(5);
       print(posts.length);
+      emit(PostLoaded(posts: posts));
+    });
+    on<GetMorePosts>(
+      (event, emit) async {
+        var posts = await getPosts(event.limit);
+        emit(PostLoaded(posts: posts));
+      },
+    );
+    on<Search>((event, emit) async {
+      emit(PostInitial());
+      var posts = await search(event.text);
       emit(PostLoaded(posts: posts));
     });
     on<LikePost>((event, emit) async {

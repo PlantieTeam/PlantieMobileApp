@@ -54,7 +54,7 @@ class MainApp extends StatelessWidget {
           create: (context) => AuthBloc()..add(const AppStarted()),
         ),
         BlocProvider(
-          create: (context) => PostBloc()..add(GetPosts(limit: 5)),
+          create: (context) => PostBloc()..add(const GetPosts()),
         )
       ],
       child: MaterialApp(

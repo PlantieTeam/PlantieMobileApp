@@ -24,7 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
     on<LoggedOut>((event, emit) async {
-      // emit(Loading());
+      emit(Loading());
       await signOutWithGoogle();
       emit(const Unauthenticated());
     });

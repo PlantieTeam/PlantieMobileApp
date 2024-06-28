@@ -227,7 +227,9 @@ class _WeatherCardState extends State<WeatherCard> {
                             fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        widget.suggestion,
+                        widget.suggestion.length > 30
+                            ? widget.suggestion.substring(0, 30) + "..."
+                            : widget.suggestion,
                         style:
                             const TextStyle(color: Colors.white, fontSize: 10),
                       ),

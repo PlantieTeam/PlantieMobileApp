@@ -71,7 +71,6 @@ class _PostCardState extends State<PostCard> {
       margin: const EdgeInsets.only(
         top: 10,
       ),
-      
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
         color: Colors.white,
@@ -100,12 +99,14 @@ class _PostCardState extends State<PostCard> {
                               fontSize: 10,
                               fontWeight: FontWeight.w400),
                         ),
-                        Image(
-                          image: AssetImage(
-                              "assets/icons/${widget.post.type.toLowerCase()}.png"),
-                          width: 10,
-                          height: 10,
-                        ),
+                        widget.post.type != " "
+                            ? Image(
+                                image: AssetImage(
+                                    "assets/icons/${widget.post.type.toLowerCase().replaceFirst(" ", "-")}.png"),
+                                width: 10,
+                                height: 10,
+                              )
+                            : const SizedBox(),
                         Text(
                           " ${widget.post.type}",
                           style: const TextStyle(

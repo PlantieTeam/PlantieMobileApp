@@ -8,10 +8,25 @@ sealed class PostEvent extends Equatable {
 }
 
 class GetPosts extends PostEvent {
+  const GetPosts();
+  @override
+  List<Object> get props => [];
+}
+
+class GetMorePosts extends PostEvent {
   final int limit;
-  GetPosts({required this.limit});
+
+  GetMorePosts({required this.limit});
   @override
   List<Object> get props => [limit];
+}
+
+// ignore: must_be_immutable
+class Search extends PostEvent {
+  String text;
+  Search({required this.text});
+  @override
+  List<Object> get props => [text];
 }
 
 class AddPost extends PostEvent {

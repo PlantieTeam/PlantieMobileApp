@@ -114,7 +114,7 @@ String checkWeatherConditions(String status, double temperature,
     return sendData(
         'اليوم تساقط البرد ودافئ، استخدم الأغطية البلاستيكية أو الأنفاق لحماية المحاصيل من الأضرار.');
   }
-  return sendData('');
+  return sendData('لا يوجد بيانات في الوقت الحالي');
 }
 
 String checkWeatherConditionsEnglish(String status, double temperature,
