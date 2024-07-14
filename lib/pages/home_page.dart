@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
+import 'package:plantie/models/UserProfile.dart';
 import 'package:plantie/models/plant.dart';
 import 'package:plantie/models/weather.dart';
 import 'package:plantie/pages/camera_result.dart';
@@ -27,6 +29,20 @@ class _MyWidgetState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      print(state.userProfile.language );
+      if(state.userProfile.language =='en') {
+        setState(() {
+          lang  =  Langauge.english;
+        });
+      } else{
+        setState(() {
+          
+        lang  =  Langauge.arabic;
+        });
+      }
+    }
   }
 
   @override

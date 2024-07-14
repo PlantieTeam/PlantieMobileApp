@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/services/firestore_services.dart';
 import 'package:plantie/shared/custome_button.dart';
 
@@ -18,12 +19,28 @@ class _MyWidgetState extends State<ProfilePage> {
       text: FirebaseAuth.instance.currentUser!.displayName!);
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      if(state.userProfile.language =='en') {
+        _selectedLanguage  = "English";
+ 
+      } else{
+        _selectedLanguage  =  "Arabic";
+     
+      }
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 18),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            textDirection:_selectedLanguage == "English" ?  TextDirection.ltr:TextDirection.rtl,
             children: [
               const SizedBox(
                 height: 40.0,
@@ -64,6 +81,11 @@ class _MyWidgetState extends State<ProfilePage> {
               DropdownButton<String>(
                 value: _selectedLanguage,
                 onChanged: (String? newValue) {
+                  if(newValue == 'English') {
+                    BlocProvider.of<UserProfileBloc>(context).add(const UpdateLanguage(langauge: 'en'));
+                  } else{
+                    BlocProvider.of<UserProfileBloc>(context).add(const UpdateLanguage(langauge: 'ar'));
+                  }
                   setState(() {
                     _selectedLanguage = newValue!;
                   });
@@ -79,8 +101,8 @@ class _MyWidgetState extends State<ProfilePage> {
               const SizedBox(
                 height: 30.0,
               ),
-              const Text(
-                'Name',
+               Text(
+                _selectedLanguage == 'English'?   'Name':"الاسم",
                 style: TextStyle(fontSize: 16.0),
               ),
               Container(
@@ -100,8 +122,11 @@ class _MyWidgetState extends State<ProfilePage> {
               const SizedBox(
                 height: 20,
               ),
-              const Text(
-                'Email',
+               Text(
+                
+                _selectedLanguage == "English" ?
+                'Email': "البريدالالكتروني",
+                textDirection:_selectedLanguage == "English" ?  TextDirection.ltr:TextDirection.rtl ,
                 style: TextStyle(fontSize: 16.0),
               ),
               Container(
@@ -125,7 +150,7 @@ class _MyWidgetState extends State<ProfilePage> {
               Center(
                 // width: MediaQuery.of(context).size.width * 0.8,
                 child: Button(
-                  text: 'Save',
+                  text:_selectedLanguage=='English'? 'Save':  'حفظ',
                   width: MediaQuery.of(context).size.width * 0.8,
                   onPressed: () {
                     updateUserInfo(
@@ -150,7 +175,7 @@ class _MyWidgetState extends State<ProfilePage> {
                   onPressed: () {
                     BlocProvider.of<AuthBloc>(context).add(LoggedOut());
                   },
-                  child: const Text('Logout'),
+                  child:  Text(_selectedLanguage == "English" ?  'Logout':"تسجيل الخروج"),
                 ),
               )
             ],

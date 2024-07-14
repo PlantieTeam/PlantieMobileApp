@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as lt;
 import 'package:plantie/bloc/plant_bloc.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/shared/custom_listView.dart';
 import 'package:plantie/shared/custome_button.dart';
 import 'package:plantie/shared/loader.dart';
@@ -22,7 +24,7 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
   TextEditingController areaController = TextEditingController(text: "0.0");
   int area = 0;
   Unit unit = Unit.Hectare;
-  var formater = NumberFormat("###.0#", "en_US");
+  var formater = lt.NumberFormat("###.0#", "en_US");
 
   Map<String, String> coll1 = {
     'Urea': "0.0",
@@ -67,17 +69,34 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
     "Olives",
     "Grapes",
   ];
+  var Language   = 'en';
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      if(state.userProfile.language =='en') {
+        Language  = "en";
+      } else{
+        Language  =  "ar";
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+        
           iconTheme: const IconThemeData(color: Colors.black),
           foregroundColor: Colors.black,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: const Text('Plantie'),
+      
+          title: Text(Language  == 'en'? 'Plantie':"بلانتي",   textDirection:  Language  == 'en'?TextDirection.ltr:TextDirection.rtl,),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -95,18 +114,24 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 child: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                   
                     children: [
                       Container(
+                        alignment: Alignment.centerRight,
+                        // textDirection:Language  == 'en'?TextDirection.ltr:TextDirection.rtl,
                           width: MediaQuery.of(context).size.width * 0.95,
                           margin: const EdgeInsets.only(top: 20),
                           child: Column(
+                            textDirection:  Language  == 'en'?TextDirection.ltr:TextDirection.rtl,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text("Choose Your Plant",
-                                  style: TextStyle(
+                               Text(Language  == 'en'?"Choose Your Plant":"اختار النبات",
+                               
+                                  style: const  TextStyle(
+                                  
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                   )),
@@ -125,6 +150,7 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                           width: MediaQuery.of(context).size.width * 0.95,
                           margin: const EdgeInsets.only(top: 20),
                           child: Column(
+                              textDirection:  Language  == 'en'?TextDirection.ltr:TextDirection.rtl,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -152,11 +178,12 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                         width: MediaQuery.of(context).size.width * 0.95,
                         margin: const EdgeInsets.only(top: 20),
                         child: Column(
+                            textDirection:  Language  == 'en'?TextDirection.ltr:TextDirection.rtl,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
-                                  "Unit ${trees.contains(state.plants[state.selectedPlant].name)}",
+                                   Language  == 'en'?"Unit":"وحده المساحه",
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -199,9 +226,10 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                                           ? Colors.grey[200]
                                                           : Colors.white60,
                                                     ),
-                                                    child: const Center(
+                                                    child:  Center(
                                                       child: Text(
-                                                        "Acres",
+                                                        Language  == 'en'?
+                                                        "Acres":"دونم",
                                                       ),
                                                     ),
                                                   ))),
@@ -226,9 +254,10 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                                               ? Colors.grey[200]
                                                               : Colors.white60,
                                                     ),
-                                                    child: const Center(
+                                                    child:  Center(
                                                       child: Text(
-                                                        "Hectare",
+                                                         Language  == 'en'?
+                                                        "Hectare":"هكتار",
                                                       ),
                                                     ),
                                                   ))),
@@ -262,15 +291,16 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                                           ? Colors.grey[200]
                                                           : Colors.white60,
                                                     ),
-                                                    child: const Center(
+                                                    child: Center(
                                                       child: Text(
-                                                        "Square Meters",
+                                                         Language  == 'en'?
+                                                        "Square Meters":"متر مربعْ",
                                                       ),
                                                     ),
                                                   ))),
                                         ],
                                       ))
-                                  : const Text("Number of Tree"),
+                                  :  Text( Language  == 'en'?"Number of Tree":"عدد الاشجار"),
                               Card(
                                   elevation: 3,
                                   color: Colors.white,
@@ -355,7 +385,7 @@ class _FertilizerCalculatorPageState extends State<FertilizerCalculatorPage> {
                                           ],
                                         ),
                                         Button(
-                                            text: "Calculate",
+                                            text: Language  == 'en'? "Calculate":"حساب",
                                             onPressed: () {
                                               calculate(state
                                                   .plants[state.selectedPlant]

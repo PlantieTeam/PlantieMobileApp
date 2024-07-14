@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/post_bloc.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/pages/comment_page.dart';
 import 'package:plantie/shared/loader.dart';
 import 'package:plantie/shared/post_card.dart';
@@ -11,12 +12,20 @@ class CommunityPage extends StatefulWidget {
   @override
   State<CommunityPage> createState() => _MyWidgetState();
 }
-
+var Language = "en";
 class _MyWidgetState extends State<CommunityPage> {
   bool isLoading = false;
   @override
   void initState() {
     super.initState();
+        var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      if(state.userProfile.language =='en') {
+        Language  = "en";
+      } else{
+        Language  =  "ar";
+      }
+    }
   }
 
   @override
@@ -48,7 +57,7 @@ class _MyWidgetState extends State<CommunityPage> {
                           .add(Search(text: value));
                     },
                     decoration: InputDecoration(
-                      hintText: 'Search',
+                      hintText: Language  == 'en'?'Search':"بحث",
                       prefixIcon: const Icon(Icons.search),
                       enabledBorder: OutlineInputBorder(
                           borderSide:

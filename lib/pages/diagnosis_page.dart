@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart' as  lt;
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/models/diagnosis.dart';
 import 'package:plantie/services/file_services.dart';
 import 'package:plantie/shared/image_preview.dart';
@@ -18,10 +18,18 @@ class DiagnosisPage extends StatefulWidget {
 class _DiagnosisPageState extends State<DiagnosisPage> {
   String? dropdownValue;
   List<Diagnosis> history = [];
-
+  var Language = "en";
   @override
   void initState() {
     super.initState();
+            var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      if(state.userProfile.language =='en') {
+        Language  = "en";
+      } else{
+        Language  =  "ar";
+      }
+    }
     loadDiagnosisHistory().then((v) {});
   }
 
@@ -73,6 +81,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
         : Center(
             child: SingleChildScrollView(
               child: Column(
+               
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -90,7 +99,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                             image: DecorationImage(
                                 image: FileImage(File(history.last.path)),
                                 fit: BoxFit.cover),
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: const BorderRadius.all(Radius.circular(10)),
                           ),
                         ),
                         Container(
@@ -114,22 +123,27 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                           ),
                         ),
                       ])),
+                  const SizedBox(height: 20,),
+
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
-                    child: const Text(
-                      "Plant Diagnose History",
-                      style: TextStyle(
+                    child:  Text(
+                       textDirection: Language  == 'en'?TextDirection.ltr:TextDirection.rtl,
+                      Language  == 'en'?
+                      "Plant Diagnose History":"سجل الامراض المكتشفه",
+                      style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xff00796A)),
                     ),
                   ),
+                  const SizedBox(height: 20,),
                   SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Row(
                         children: [
                           DropdownMenu(
-                              hintText: "Sorting by",
+                              hintText: Language  == 'en'?"Sorting by":   'رتب  على ',
                               initialSelection: "Sorting By",
                               width: 180,
                               textStyle: const TextStyle(fontSize: 12),
@@ -139,11 +153,11 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                                   dropdownValue = value;
                                 });
                               },
-                              dropdownMenuEntries: const [
+                              dropdownMenuEntries:  [
                                 DropdownMenuEntry(
-                                    value: "latest", label: "Sort By Latest"),
+                                    value: "latest", label:  Language  == 'en'? "Sort By Latest":"رتب  من حيث الاحدث"),
                                 DropdownMenuEntry(
-                                    value: "oldest", label: "Sort By Oldest"),
+                                    value: "oldest", label: Language  == 'en'? "Sort By Oldest":"رتب من حيث الاقدم"),
                               ]),
                           const SizedBox(width: 10),
                           TextButton.icon(
@@ -158,7 +172,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                               ),
                               icon: const Icon(Icons.clear_all),
                               onPressed: clearHistory,
-                              label: const Text("Clear History"))
+                              label:  Text(Language  == 'en'? "Clear History":"نظف السجل"))
                         ],
                       )),
                   SizedBox(
@@ -196,7 +210,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                                         ),
                                         const Spacer(),
                                         Text(
-                                          DateFormat("MMM d, yyyy")
+                                          lt.DateFormat("MMM d, yyyy")
                                               .format(history[index].dateTime),
                                           style: const TextStyle(fontSize: 12),
                                         ),

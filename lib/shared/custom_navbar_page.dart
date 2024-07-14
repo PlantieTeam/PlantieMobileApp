@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/models/weather.dart';
 import 'package:plantie/pages/add_post_page.dart';
 import 'package:plantie/pages/camera_capture.dart';
@@ -25,10 +27,19 @@ class CustomNavBar extends StatefulWidget {
 class _MyWidgetState extends State<CustomNavBar> {
   int _currentIndex = 0;
   Weather weatherData = Weather();
+  var Language  =  "ar";
+
   @override
   void initState() {
     super.initState();
-
+        var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      if(state.userProfile.language =='en') {
+        Language  = "en";
+      } else{
+        Language  =  "ar";
+      }
+    }
     screens = [
       HomePage(weatherData: weatherData),
       const CommunityPage(),
@@ -142,45 +153,7 @@ class _MyWidgetState extends State<CustomNavBar> {
     return SafeArea(
         child: Scaffold(
       backgroundColor: Colors.white,
-      // drawer: const Drawer(),
-      // appBar: AppBar(
-      //   iconTheme: const IconThemeData(color: Colors.black),
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   title: const Text(
-      //     'Plantie',
-      //     style: TextStyle(color: Colors.black),
-      //   ),
-      //   actions: [
-      //     PopupMenuButton(
-      //         popUpAnimationStyle: AnimationStyle.noAnimation,
-      //         position: PopupMenuPosition.under,
-      //         icon: CircleAvatar(
-      //             backgroundImage: (user.photoURL != null
-      //                 ? NetworkImage(
-      //                     user.photoURL!,
-      //                   )
-      //                 : null)),
-      //         itemBuilder: (context) => [
-      //               const PopupMenuItem(
-      //                 child: Text('Profile'),
-      //               ),
-      //               PopupMenuItem(
-      //                 child: const Row(
-      //                   children: [
-      //                     Icon(Icons.logout),
-      //                     SizedBox(width: 5),
-      //                     Expanded(child: Text('Logout'))
-      //                   ],
-      //                 ),
-      //                 onTap: () {
-      //                   // signOutWithGoogle();
-      //                   BlocProvider.of<AuthBloc>(context).add(LoggedOut());
-      //                 },
-      //               )
-      //             ]),
-      //   ],
-      // ),
+     
       body: PageStorage(
         bucket: bucket,
         child: screens[_currentIndex],
@@ -191,7 +164,7 @@ class _MyWidgetState extends State<CustomNavBar> {
       floatingActionButton: _currentIndex == 1
           ? FloatingActionButton.extended(
               label:
-                  const Text('Add Post', style: TextStyle(color: Colors.white)),
+                   Text(Language=='en' ?'Add Post': 'نشر', style: TextStyle(color: Colors.white)),
               backgroundColor: primaryColor,
               onPressed: () {
                 if (_currentIndex == 1) {

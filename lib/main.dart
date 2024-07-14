@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plantie/bloc/auth_bloc.dart';
 import 'package:plantie/bloc/plant_bloc.dart';
 import 'package:plantie/bloc/post_bloc.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/firebase_options.dart';
 import 'package:plantie/pages/landing_page.dart';
 import 'package:plantie/pages/login_page.dart';
@@ -55,7 +56,8 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => PostBloc()..add(const GetPosts()),
-        )
+        ),
+        BlocProvider(create:(context)=>UserProfileBloc()..add(const  GetLangauge()))
       ],
       child: MaterialApp(
         routes: {

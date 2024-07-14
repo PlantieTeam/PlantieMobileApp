@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
+import 'package:plantie/bloc/user_profile_bloc.dart';
 import 'package:plantie/models/diagnosis.dart';
 import 'package:plantie/models/disease.dart';
 import 'package:plantie/services/file_services.dart';
@@ -150,14 +152,20 @@ class _CameraResultState extends State<CameraResult> {
         currentLatitude!, currentLongitude!, nearestLatitude, nearestLongitude);
   }
 
+  Langauge lang = Langauge.arabic;
   @override
   void initState() {
     super.initState();
     predict();
+    var state = BlocProvider.of<UserProfileBloc>(context).state;
+    if (state is UserProfileLoaded) {
+      if (state.userProfile.language == 'en') {
+        lang = Langauge.english;
+      } else {
+        lang = Langauge.arabic;
+      }
+    }
   }
-
-  Langauge lang = Langauge.arabic;
-
   @override
   Widget build(BuildContext context) {
     if (dbDiseasesEN[index].isHealthy) {
